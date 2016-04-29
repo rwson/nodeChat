@@ -12,7 +12,7 @@ const RoomController = promisedNode.load(Controller.Room);
 const MessageController = promisedNode.load(Controller.Message);
 
 
-exports.socketEvent = (socket) => {
+module.exports = (socket) => {
 
     /**
      * 新用户加入

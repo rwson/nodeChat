@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "nodees6 app.js",
+    "debug": "supervisores6 app.js"
   },
   "dependencies": {
     "async": "*",
@@ -11,7 +12,11 @@
     "cookie-parser": "~1.3.5",
     "debug": "~2.2.0",
     "ejs": "~2.3.3",
-    "express": "~4.13.1",
+    "express": "4.13.1",
+    "express-mongoose-store": "^1.0.5",
+    "express-promise": "^0.4.0",
+    "express-session": "^1.13.0",
+    "mongoose-session": "0.0.4",
     "mongoose": "*",
     "morgan": "~1.6.1",
     "promised-node": "^0.1.4",

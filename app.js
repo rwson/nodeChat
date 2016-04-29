@@ -5,14 +5,20 @@
 "use strict";
 
 const express = require("express");
+const expressPromise = require("express-promise");
 const path = require("path");
 const favicon = require("serve-favicon");
 const logger = require("morgan");
+const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
+const session = require("express-session");
 const bodyParser = require("body-parser");
 const debug = require("debug")("nodeChat:server");
 const socketIo = require("socket.io");
 const router = require("./Router");
+const config = require("./config");
+
+require("./_.mongoose.page");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -23,15 +29,21 @@ app.set("port", port);
 
 app.use(logger("dev"));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
-app.use(express.session({
-    "secret": "nodeChat",
+app.use(session({
+    "secret": config.cookieSecret,
     "cookie": {
-        "maxAge": 60 * 1000 * 60
-    }
+        "maxAge": config.maxAge
+    },
+    key: config.db,
+    store: require("mongoose-session")(mongoose)
 }));
+app.use(expressPromise());
+
+//  应用路由模块
+router(app);
 
 if (app.get("env") === "development") {
     app.use((err, req, res, next) => {
@@ -50,8 +62,8 @@ let io = socketIo.listen(app.listen(app.get("port"), () => {
 
 
 io.on("connection", (socket) => {
-    socket.emit("news", { hello: "world" });
-    socket.on("test event",function(data){
+    socket.emit("news", {hello: "world"});
+    socket.on("test event", function (data) {
         console.log(data);
     });
 });

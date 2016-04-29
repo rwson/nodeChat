@@ -4,31 +4,32 @@
 
 "use strict";
 
-const Controller = require("../Controller");
-const promisedNode = require("promised-node");
+let Controller = require("../Controller");
 
-const UserController = promisedNode.load(Controller.User);
-const RoomController = promisedNode.load(Controller.Room);
-const MessageController = promisedNode.load(Controller.Message);
+const UserController = Controller.User;
+const RoomController = Controller.Room;
+const MessageController = Controller.Message;
 
 /**
  * 路由控制模块
  */
-exports.Router = (app, socket) => {
+module.exports = (app, socket) => {
 
     /**
      * 验证用户是否登录
      */
     app.get("/api/validate", (req, res, next) => {
+        console.log(req.session);
         let userId = req.session.userId;
         if (!userId) {
-            res.send(401);
-            next();
+            return res.send(401);
         }
 
         UserController.findUserById(userId)
             .then((user) => {
-                return res.send(200, {});
+                return res.send(200, {
+                    "msg":"success"
+                });
             })
             .catch((ex) => _errorHandler(res, ex, next));
     });
@@ -37,17 +38,18 @@ exports.Router = (app, socket) => {
      * 登录或注册请求
      */
     app.post("/api/login-register", (req, res, next) => {
-        let email = req.body.email;
-        UserController.findByEmailOrCreate(email).then((user) => {
-            let userId = user._id;
-            UserController.online(userId)
-                .then(() => {
-                    req.session.userId = userId;
-                    return res.send(200);
-                })
-                .catch((ex) =>  _errorHandler(res, ex, next));
-        })
-            .catch((ex) =>  _errorHandler(res, ex, next));
+        let email = req.query.email;
+        UserController.findByEmailOrCreate(email, (ex, user) => {
+            _errorHandler(res, ex, next);
+            let userId = user.id;
+            UserController.online(userId, (ex) => {
+                _errorHandler(res, ex, next);
+                req.session.userId = userId;
+                return res.send(200, {
+                    "user": user
+                });
+            });
+        });
     });
 
     /**
