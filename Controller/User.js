@@ -4,7 +4,7 @@
 
 "use strict";
 
-const fs = require("promised-node").load("fs");
+const fs = require("fs");
 const Config = require("../config");
 const Util = require("../Util");
 const Model = require("../Model");
@@ -13,135 +13,194 @@ const UserModel = Model.User;
 var avaList = [];
 
 //	读取头像目录
-fs.readdir(Config.avatarPath)
-    .then((files) => {
-        if (files && files.length) {
-            files.forEach((item) => {
-                avaList.push(`${Config.avatarPath.replace("public", "")}/${item}`);
-            });
-        }
-    });
+_readFile(Config.avatarPath).then(function (files) {
+    if (files && files.length) {
+        files.forEach((item) => {
+            avaList.push(`${Config.avatarPath.replace("public", "")}/${item}`);
+        });
+    }
+});
 
 module.exports = {
 
     /**
      * 根据Id查询用户
-     * @param  {[type]}   _userId  [description]
-     * @param  {Function} callback [description]
-     * @return {[type]}            [description]
+     * @param _userId       用户id
+     * @returns {Promise}
      */
-    "findUserById": function (_userId, callback) {
-        UserModel.findUserById(_userId)
-            .exec()
-            .then((user) => {
-                return callback(null, user);
-            }).catch((ex) => {
-                return callback(ex, user);
+    "findUserById": function (_userId) {
+        var promise = new Promise((resolve, reject) => {
+            UserModel.findById(_userId, (ex, user) => {
+                if (ex) {
+                    reject(ex);
+                }
+                resolve(user);
             });
+        });
+        return promise;
     },
 
     /**
      * 根据邮箱查找用户/创建用户
-     * @param  {[type]}   email    [description]
-     * @param  {Function} callback [description]
-     * @return {[type]}            [description]
+     * @param email     邮箱
+     * @returns {Promise}
      */
-    "findByEmailOrCreate": function (email, callback) {
-        UserModel.find({"email": email})
-            .exec()
-            .then((user) => {
-                if (user.length) {
-                    return callback(null, user[0]);
+    "findByEmailOrCreate": function (email) {
+        var promise = new Promise((resolve, reject) => {
+            UserModel.find({"email": email}, (ex, user) => {
+                if (ex) {
+                    reject(ex);
                 }
-                user = new UserModel({
-                    "name": email.split("@")[0],
-                    "email": email,
-                    "avatarUrl": avaList[Util.random(0, avaList.length - 1)]
-                });
-                user.save((user) => {
-                    callback(null, user);
-                });
-            })
-            .catch((ex) => {
-                return callback(ex);
+                if (user.length) {
+                    resolve(user[0]);
+                } else {
+                    user = new UserModel({
+                        "name": email.split("@")[0],
+                        "email": email,
+                        "avatarUrl": avaList[Util.random(0, avaList.length - 1)]
+                    });
+                    user.save((ex, user) => {
+                        if (ex) {
+                            reject(ex);
+                        }
+                        if (user.length) {
+                            resolve(user);
+                        }
+                    });
+                }
             });
+        });
+        return promise;
     },
 
     /**
      * 用户加入一个房间
-     * @param userId        用户id
-     * @param roomId        房间id
-     * @param callback      回调函数
+     * @param userId    用户id
+     * @param roomId    房间id
+     * @returns {Promise}
      */
-    "joinRoom": function (userId, roomId, callback) {
-        UserModel.findById(userId, (ex, user) => {
-            if (ex) {
-                return callback(ex);
-            }
-            user._roomId = roomId;
-            user.online = true;
-            user.save(callback);
+    "joinRoom": function (userId, roomId) {
+        var promise = new Promise((resolve, reject) => {
+            UserModel.findOneAndUpdate({
+                "_id": userId
+            }, {
+                "$set": {
+                    "_roomId": roomId
+                }
+            }, (ex, user) => {
+                if (ex) {
+                    reject(ex);
+                }
+                resolve(user);
+            });
         });
+        return promise;
     },
 
     /**
      * 用户离开房间
-     * @param userId        用户id
-     * @param roomId        房间id
-     * @param callback      回调函数
+     * @param userId    用户id
+     * @returns {Promise}
      */
-    "leaveRoom": function (userId, roomId, callback) {
-        UserModel.findById(userId, (ex, user) => {
-            if (ex) {
-                return callback(ex);
-            }
-            user._roomId = "";
-            user.online = true;
-            user.save(callback);
+    "leaveRoom": function (userId) {
+        var promise = new Promise((resolve, reject) => {
+            var promise = new Promise((resolve, reject) => {
+                UserModel.findOneAndUpdate({
+                    "_id": userId
+                }, {
+                    "$set": {
+                        "_roomId": ""
+                    }
+                }, (ex, user) => {
+                    if (ex) {
+                        reject(ex);
+                    }
+                    resolve(user);
+                });
+            });
         });
+        return promise;
     },
 
     /**
      * 用户上线
-     * @param  {[type]}   _userId  [description]
-     * @param  {Function} callback [description]
-     * @return {[type]}            [description]
+     * @param _userId   用户id
+     * @returns {Promise}
      */
-    "online": function (_userId, callback) {
-        UserModel.findOneAndUpdate({
-            "_id": _userId
-        }, {
-            "$set": {
-                "online": true
-            }
-        }, callback);
+    "online": function (_userId) {
+        var promise = new Promise((resolve, reject) => {
+            UserModel.findOneAndUpdate({
+                "_id": _userId
+            }, {
+                "$set": {
+                    "online": true
+                }
+            }, (ex, user) => {
+                if (ex) {
+                    reject(ex);
+                }
+                resolve(user);
+            });
+        });
+        return promise;
     },
 
     /**
      * 用户下线
-     * @param  {[type]}   _userId  [description]
-     * @param  {Function} callback [description]
-     * @return {[type]}            [description]
+     * @param _userId   用户id
+     * @returns {Promise}
      */
-    "offline": function (_userId, callback) {
-        UserModel.findOneAndUpdate({
-            "_id": _userId
-        }, {
-            "$set": {
-                "online": false
-            }
-        }, callback);
+    "offline": function (_userId) {
+        var promise = new Promise((resolve, reject) => {
+            UserModel.findOneAndUpdate({
+                "_id": _userId
+            }, {
+                "$set": {
+                    "online": false
+                }
+            }, (ex, user) => {
+                if (ex) {
+                    reject(ex);
+                }
+                resolve(user);
+            });
+        });
+        return promise;
     },
 
     /**
      * 获取在线用户
-     * @param  {Function} callback [description]
-     * @return {[type]}            [description]
+     * @returns {Promise}
      */
-    "getOnlineUsers": function (callback) {
-        UserModel.find({
-            "online": true
-        }, callback);
+    "getOnlineUsers": function () {
+        var promise = new Promise((resolve, reject) => {
+            UserModel.find({
+                "online": true
+            }, (ex, users) => {
+                if (ex) {
+                    reject(ex);
+                }
+                resolve(users);
+            });
+        });
+        return promise;
     }
 
 };
+
+/**
+ * 异步读取文件
+ * @param path      目标路径
+ * @returns {Promise}
+ */
+function _readFile(path) {
+    var prromise = new Promise((resolve, reject) => {
+        fs.readdir(path, (ex, files) => {
+            if (ex) {
+                reject(ex);
+            }
+            resolve(files);
+        });
+    });
+    return prromise;
+}

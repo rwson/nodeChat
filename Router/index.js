@@ -19,16 +19,15 @@ module.exports = (app, socket) => {
      * 验证用户是否登录
      */
     app.get("/api/validate", (req, res, next) => {
-        console.log(req.session);
         let userId = req.session.userId;
         if (!userId) {
             return res.send(401);
         }
-
         UserController.findUserById(userId)
             .then((user) => {
                 return res.send(200, {
-                    "msg":"success"
+                    "msg": "success",
+                    "user": user
                 });
             })
             .catch((ex) => _errorHandler(res, ex, next));
@@ -39,30 +38,27 @@ module.exports = (app, socket) => {
      */
     app.post("/api/login-register", (req, res, next) => {
         let email = req.query.email;
-        UserController.findByEmailOrCreate(email, (ex, user) => {
-            _errorHandler(res, ex, next);
-            let userId = user.id;
-            UserController.online(userId, (ex) => {
-                _errorHandler(res, ex, next);
+        UserController.findByEmailOrCreate(email).then((user) => {
+            let userId = user._id;
+            UserController.online(userId).then((user) => {
                 req.session.userId = userId;
-                return res.send(200, {
+                res.send(200, {
                     "user": user
                 });
             });
-        });
+        }).catch((ex) => _errorHandler(res, ex, next));
     });
 
     /**
      * 用户登出请求
      */
-    app.post("/api/logout", (req, res) => {
+    app.post("/api/logout", (req, res, next) => {
         let userId = req.session.userId;
         UserController.offline(userId)
             .then(() => {
                 req.session.userId = null;
                 return res.send(200);
-            }).catch(() => {
-            });
+            }).catch((ex) => _errorHandler(res, ex, next));
     });
 
     /**

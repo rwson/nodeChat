@@ -18,6 +18,7 @@ const socketIo = require("socket.io");
 const router = require("./Router");
 const config = require("./config");
 
+//  mongodb分页查询
 require("./_.mongoose.page");
 
 const app = express();
