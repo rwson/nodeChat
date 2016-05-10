@@ -10,11 +10,11 @@ const MessageModel = Model.Message;
 module.exports = {
 
     /**
-     * 根据roomId获取信息
+     * 根据roomId获取信息(20条)
      * @param roomId    房间id
      * @returns {Promise}
      */
-    "getMessagesByRoom": function (roomId) {
+    "getMessagesByRoomId": function (roomId) {
         var promise = new Promise((resolve, reject) => {
             MessageModel.find({
                 "_roomId": roomId

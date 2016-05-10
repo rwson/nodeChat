@@ -13,10 +13,12 @@ import thunk from "redux-thunk";
 import createBrowserHistory from "history/lib/createBrowserHistory";
 import {routerReducer,routerMiddleware} from "react-router-redux";
 
+import "whatwg-fetch";
+
 import reducers from "./reducers";
 import AppRouters from "./router";
 
-import "../css/style.css";
+import "../css/bootstrap.min.css";
 
 const reducer = combineReducers({
     reducers,
@@ -30,11 +32,9 @@ const store = createStore(
 
 const history = createBrowserHistory();
 
-ReactDOM.render(
-    <div className="container">
-        <Provider store={store}>
-            <Router history={history} routes={AppRouters()}/>
-        </Provider>
-    </div>,
-    document.getElementById("app")
-);
+ReactDOM.render(<div>
+    <Provider store={store}>
+        <Router history={history} routes={AppRouters()}/>
+    </Provider>
+</div>, document.querySelector("#chatApp"));
+

@@ -10,6 +10,12 @@ import {connect} from "react-redux";
 import {createStore,bindActionCreators} from "redux";
 import {routeActions} from "react-router-redux";
 
+import {
+    Main,
+    Login,
+    Nav
+} from "../components";
+
 /**
  * App Container
  */
@@ -30,8 +36,11 @@ class App extends Component {
     render() {
         const {content} = this.props;
         return (
-            <div className="body_container">
-                {content}
+            <div className="body-container">
+                <Nav />
+                <div className="container">
+                    {content}
+                </div>
             </div>
         );
     }
