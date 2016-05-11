@@ -4,11 +4,12 @@
 
 "use strict";
 
-import React,{Component} from "react";
-import {Route,Link,IndexRoute} from "react-router";
-import {connect} from "react-redux";
-import {createStore,bindActionCreators} from "redux";
-import {routeActions} from "react-router-redux";
+import React,{ Component } from "react";
+import { Route,Link,IndexRoute } from "react-router";
+import { bindActionCreators } from "redux";
+import { connect } from "react-redux";
+import * as Actions from "../actions";
+
 
 import {
     Main,
@@ -32,18 +33,19 @@ class App extends Component {
         super(props);
     }
 
+    
+
     /**
      * 渲染组件布局
      * @returns {XML}
      */
     render() {
-        const {content} = this.props;
-
-        console.log(content);
+        const {content, routes } = this.props;
 
         return (
             <div className="body-container">
-                <Nav />
+                <Nav curState={routes[routes.length - 1]["path"] || ""} />
+
                 <div className="container main-container">
                     {content}
                 </div>

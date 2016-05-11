@@ -1,0 +1,7 @@
+span.input-group-addon {
+    cursor: pointer;
+}
+
+.nav>li.hide-nav-item {
+    display: none;
+}

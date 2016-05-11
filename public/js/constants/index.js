@@ -9,6 +9,9 @@ export default ({
     //  socket配置地址
     "SOCKET_ADDRESS": "http://127.0.0.1:3000",
 
+    //  检测用户是否登录
+    "CHECK_LOGIN": "CHECK_LOGIN",
+
     //  登录
     "LOGIN": "LOGIN",
 

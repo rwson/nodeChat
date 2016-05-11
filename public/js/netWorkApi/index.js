@@ -16,6 +16,9 @@ const httpDefaultConfig = {
     }
 };
 
+//  请求前缀
+const urlPrefix = "/api/";
+
 /**
  * GET请求
  * @param opts  参数配置
@@ -41,7 +44,7 @@ export function httpPostRequest(opts) {
     fetch(opts.url, {
         ...httpDefaultConfig,
         "method": "POST",
-        "body":JSON.stringify(opts.body)
+        "body": JSON.stringify(opts.body)
     }).then((res) => {
         return res.json();
     }).then((res) => {
@@ -51,6 +54,13 @@ export function httpPostRequest(opts) {
     });
 }
 
+//  暴露ajax请求url相关配置
+export const Urls = {
+    "checkLogin": `${urlPrefix}validate`,      //  验证是否登录
+    "login": `${urlPrefix}-register`,          //  登录、新用户注册
+    "logout": `${urlPrefix}logout`             //  登出
+};
+
 /**
  * 运行回调函数
  * @param res   状态值(success|error)
@@ -59,8 +69,8 @@ export function httpPostRequest(opts) {
  */
 function _runCallbacks(res, opts) {
     if (res.status == "success") {
-        getProType(opts.success) == "function" && opts.success(res);
+        getProType(opts.success) == "function" && opts.success.call(opts.context || this, res);
     } else if (res.status == "error") {
-        getProType(opts.error) == "function" && opts.error(res);
+        getProType(opts.error) == "function" && opts.error.call(opts.context || this, res);
     }
 }

@@ -22,7 +22,9 @@ const config = require("./config");
 require("./_.mongoose.page");
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 4000;
+
+app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
@@ -58,7 +60,7 @@ if (app.get("env") === "development") {
 
 //  开启socket监听
 let io = socketIo.listen(app.listen(app.get("port"), () => {
-    console.log("app listen on" + app.get("port") + "...");
+    console.log("app listen on " + app.get("port") + "...");
 }));
 
 

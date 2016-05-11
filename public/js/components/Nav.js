@@ -10,6 +10,7 @@ import classname from "classname";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import * as Actions from "../actions";
+import * as netWorkApi from "../netWorkApi";
 
 class Nav extends Component {
 
@@ -18,10 +19,28 @@ class Nav extends Component {
     }
 
     /**
+     * 组件即将被实例化完成
+     */
+    componentWillMount() {
+        const { checkLogin } = this.props;
+
+        //  检测用户是否登录
+        netWorkApi.httpGetRequest({
+            "url": netWorkApi.Urls.checkLogin,
+            "context": this,
+            "success": function (data) {
+                checkLogin(true);
+            },
+            "error": function (ex) {
+                checkLogin(false);
+            }
+        });
+    }
+
+    /**
      * 登出
      */
     logout() {
-
     }
 
     /**
@@ -29,7 +48,10 @@ class Nav extends Component {
      * @returns {XML}
      */
     render() {
-        const { curRoute } = this.props;
+        const { curState, online } = this.props;
+
+        console.log(online);
+
         return (
             <header className="navbar navbar-static-top bs-docs-nav navbar-inverse">
                 <div className="container">
@@ -39,26 +61,31 @@ class Nav extends Component {
                     <nav id="bs-navbar" className="collapse navbar-collapse">
                         <ul className="nav navbar-nav">
                             <li className={classname({
-                                "active":(curRoute == "/" || curRoute == "")
+                                "active": (curState == "/" || curState == "")
                             })}>
                                 <Link to="/">首页</Link>
                             </li>
                             <li className={classname({
-                                "active":curRoute == "login"
+                                "active": curState == "login",
+                                "hide-nav-item": online
                             })}>
                                 <Link to="/login">登录</Link>
                             </li>
                             <li className={classname({
-                                "active":(curRoute == "rooms" || curRoute == "room")
+                                "active": (curState == "rooms" || curState == "room"),
+                                "hide-nav-item": !online
                             })}>
                                 <Link to="/rooms">房间列表</Link>
                             </li>
                             <li className={classname({
-                                "active":curRoute == "my"
+                                "active": curState == "my",
+                                "hide-nav-item": !online
                             })}>
                                 <Link to="/my">我的</Link>
                             </li>
-                            <li>
+                            <li className={classname({
+                                "hide-nav-item": !online
+                            })}>
                                 <a href="javascript:;" onClick={this.logout()}>登出</a>
                             </li>
                         </ul>
@@ -69,11 +96,15 @@ class Nav extends Component {
     }
 }
 
+
 function mapStateToProps(state) {
     return {
-        curRoute: state.reducers.curRoute
+        "online": state.reducers.online
     };
 }
 
-export default connect(mapStateToProps)(Nav);
+function mapDispatchToProps(dispatch) {
+    return bindActionCreators(Actions, dispatch);
+}
 
+export default connect(mapStateToProps, mapDispatchToProps)(Nav);
