@@ -57,7 +57,7 @@ export function httpPostRequest(opts) {
 //  暴露ajax请求url相关配置
 export const Urls = {
     "checkLogin": `${urlPrefix}validate`,      //  验证是否登录
-    "login": `${urlPrefix}-register`,          //  登录、新用户注册
+    "login": `${urlPrefix}login-register`,     //  登录、新用户注册
     "logout": `${urlPrefix}logout`             //  登出
 };
 

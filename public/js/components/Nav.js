@@ -41,6 +41,22 @@ class Nav extends Component {
      * 登出
      */
     logout() {
+        const { logout, offline } = this.props;
+
+        //  检测用户是否登录
+        netWorkApi.httpGetRequest({
+            "url": netWorkApi.Urls.checkLogin,
+            "context": this,
+            "success": function (data) {
+
+                //  退出登录后,前端也下线
+                logout();
+                checkLogin(false);
+                offline();
+            },
+            "error": function (ex) {
+            }
+        });
     }
 
     /**
@@ -48,9 +64,7 @@ class Nav extends Component {
      * @returns {XML}
      */
     render() {
-        const { curState, online } = this.props;
-
-        console.log(online);
+        const { curState, online, userInfo } = this.props;
 
         return (
             <header className="navbar navbar-static-top bs-docs-nav navbar-inverse">
@@ -89,6 +103,16 @@ class Nav extends Component {
                                 <a href="javascript:;" onClick={this.logout()}>登出</a>
                             </li>
                         </ul>
+                        <ul className={classname({
+                                "nav navbar-nav navbar-right": true,
+                                "hide-nav-item": !Object.keys(userInfo).length
+                            })}>
+                            <li>
+                                <Link to={`/user/${userInfo._id}`} className="user-head-link">
+                                    <img src={userInfo.avatarUrl} title={userInfo.name} className="img-rounded user-head" />
+                                </Link>
+                            </li>
+                        </ul>
                     </nav>
                 </div>
             </header>
@@ -99,7 +123,8 @@ class Nav extends Component {
 
 function mapStateToProps(state) {
     return {
-        "online": state.reducers.online
+        "online": state.reducers.online,
+        "userInfo": state.reducers.userInfo
     };
 }
 

@@ -2,6 +2,16 @@ span.input-group-addon {
     cursor: pointer;
 }
 
-.nav>li.hide-nav-item {
+.nav>li.hide-nav-item,
+.hide-nav-item{
     display: none;
+}
+
+.user-head {
+    width: 40px;
+    height: 40px;
+}
+
+.navbar-nav>li>a.user-head-link {
+    padding: 5px;
 }

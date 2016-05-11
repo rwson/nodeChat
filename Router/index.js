@@ -20,37 +20,57 @@ module.exports = (app, socket) => {
      * 验证用户是否登录
      */
     app.get("/api/validate", (req, res, next) => {
-        let userId = req.session.userId;
-        if (!userId) {
-            return res.send(401, {
-                "status": "error"
-            });
+        try {
+            console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+            //console.log(req.session.userId);
+            let userId = req.session.userId;
+            console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+            if (!userId) {
+                return res.status(401)
+                    .send({
+                        "status": "error"
+                    })
+                    .end();
+            }
+            //
+            //UserController.findUserById(userId)
+            //    .then((user) => {
+            //        return res.status(200)
+            //            .send({
+            //                "status": "success",
+            //                "user": user
+            //            })
+            //            .end();
+            //    })
+            //    .catch((ex) => {
+            //        return _errorHandler(res, ex, next);
+            //    });
+        }catch(e){
+            console.log("查询用户出错!");
+            console.log("出错啦!");
         }
-        UserController.findUserById(userId)
-            .then((user) => {
-                return res.send(200, {
-                    "status": "success",
-                    "user": user
-                });
-            })
-            .catch((ex) => _errorHandler(res, ex, next));
     });
 
     /**
      * 登录或注册请求
      */
-    app.post("/api/login-register", (req, res, next) => {
-        let email = req.query.email;
+    app.post("/api/login-register/:email", (req, res, next) => {
+        let email = req.params.email;
         UserController.findByEmailOrCreate(email).then((user) => {
             let userId = user._id;
             UserController.online(userId).then((user) => {
                 req.session.userId = userId;
-                res.send(200, {
-                    "status": "success",
-                    "user": user
-                });
+                res.status(200)
+                    .send({
+                        "status": "success",
+                        "user": user
+                    })
+                    .end();
             });
-        }).catch((ex) => _errorHandler(res, ex, next));
+        })
+        .catch((ex) => {
+            return _errorHandler(res, ex, next);
+        });
     });
 
     /**
@@ -61,10 +81,15 @@ module.exports = (app, socket) => {
         UserController.offline(userId)
             .then(() => {
                 req.session.userId = null;
-                return res.send(200, {
-                    "status": "success"
-                });
-            }).catch((ex) => _errorHandler(res, ex, next));
+                res.status(200)
+                    .send({
+                        "status": "success"
+                    })
+                    .end();
+            })
+            .catch((ex) => {
+                return _errorHandler(res, ex, next);
+            });
     });
 
     /**
@@ -77,14 +102,16 @@ module.exports = (app, socket) => {
 
 /**
  * 错误优先处理
- * @param  {object} res response对象
- * @param  {object} ex  错误对象
+ * @param  {object} res     response对象
+ * @param  {object} ex      错误对象
+ * @param  {function} next  回调
  */
 function _errorHandler(res, ex, next) {
     if (ex) {
-        res.send(500, Object.assign({}, ex, {
-            "status": "error"
-        }));
-        next();
+        res.status(500)
+            .send(500, Object.assign({}, ex, {
+                "status": "error"
+            }))
+            .end();
     }
 }

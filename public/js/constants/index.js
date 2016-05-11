@@ -18,6 +18,9 @@ export default ({
     //  登出
     "LOGOUT": "LOGOUT",
 
+    //  用户下线
+    "USER_OFFLINE": "USER_OFFLINE",
+
     //  加入房间
     "JOIN_ROOM": "JOIN_ROOM",
 

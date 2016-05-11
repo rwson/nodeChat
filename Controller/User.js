@@ -30,12 +30,16 @@ module.exports = {
      */
     "findUserById": function (_userId) {
         var promise = new Promise((resolve, reject) => {
-            UserModel.findById(_userId, (ex, user) => {
-                if (ex) {
-                    reject(ex);
-                }
-                resolve(user);
-            });
+            try {
+                UserModel.findById(_userId, (ex, user) => {
+                    if (ex) {
+                        reject(ex);
+                    }
+                    resolve(user);
+                });
+            } catch (e) {
+                console.log("出错了");
+            }
         });
         return promise;
     },
@@ -73,11 +77,26 @@ module.exports = {
         return promise;
     },
 
+    /**
+     * 添加好友
+     * @param userId        用户id
+     * @param friendId      好友id
+     * @returns {Promise}
+     */
     "addFriend": function (userId, friendId) {
-
+        var promise = new Promise();
+        return promise;
     },
 
+    /**
+     * 删除好友
+     * @param userId        用户id
+     * @param friendId      好友id
+     * @returns {Promise}
+     */
     "deleteFriend": function (userId, friendId) {
+        var promise = new Promise();
+        return promise;
     },
 
     /**
@@ -88,9 +107,7 @@ module.exports = {
      */
     "joinRoom": function (userId, roomId) {
         var promise = new Promise((resolve, reject) => {
-            UserModel.findOneAndUpdate({
-                "_id": userId
-            }, {
+            UserModel.findOneAndUpdate(userId, {
                 "$set": {
                     "_roomId": roomId
                 }
@@ -112,9 +129,7 @@ module.exports = {
     "leaveRoom": function (userId) {
         var promise = new Promise((resolve, reject) => {
             var promise = new Promise((resolve, reject) => {
-                UserModel.findOneAndUpdate({
-                    "_id": userId
-                }, {
+                UserModel.findByIdAndUpdate(userId, {
                     "$set": {
                         "_roomId": ""
                     }
@@ -136,9 +151,8 @@ module.exports = {
      */
     "online": function (_userId) {
         var promise = new Promise((resolve, reject) => {
-            UserModel.findOneAndUpdate({
-                "_id": _userId
-            }, {
+            console.log();
+            UserModel.findByIdAndUpdate(_userId, {
                 "$set": {
                     "online": true
                 }
@@ -159,9 +173,7 @@ module.exports = {
      */
     "offline": function (_userId) {
         var promise = new Promise((resolve, reject) => {
-            UserModel.findOneAndUpdate({
-                "_id": _userId
-            }, {
+            UserModel.findOneAndUpdate(_userId, {
                 "$set": {
                     "online": false
                 }

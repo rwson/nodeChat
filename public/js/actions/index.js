@@ -4,7 +4,7 @@
 
 "use strict";
 
-import { CHECK_LOGIN,LOGIN, LOGOUT, JOIN_ROOM, LEAVE_ROOM, POST_MESSAGE } from "../constants";
+import { CHECK_LOGIN,LOGIN, LOGOUT, USER_OFFLINE, JOIN_ROOM, LEAVE_ROOM, POST_MESSAGE } from "../constants";
 
 /**
  * 检测用户是否登录
@@ -20,11 +20,13 @@ export function checkLogin(online) {
 
 /**
  * 登录成功
+ * @param userInfo      后端返回的用户信息
  * @returns {{type: *}}
  */
-export function login() {
+export function login(userInfo) {
     return {
-        "type": LOGIN
+        "type": LOGIN,
+        "userInfo": userInfo
     };
 }
 
@@ -35,5 +37,15 @@ export function login() {
 export function logot() {
     return {
         "type": LOGOUT
+    };
+}
+
+/**
+ * 用户下线
+ * @returns {{type: *}}
+ */
+export function offline() {
+    return {
+        "type": USER_OFFLINE
     };
 }
