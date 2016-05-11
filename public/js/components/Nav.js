@@ -19,25 +19,6 @@ class Nav extends Component {
     }
 
     /**
-     * 组件即将被实例化完成
-     */
-    componentWillMount() {
-        const { checkLogin } = this.props;
-
-        //  检测用户是否登录
-        netWorkApi.httpGetRequest({
-            "url": netWorkApi.Urls.checkLogin,
-            "context": this,
-            "success": function (data) {
-                checkLogin(true);
-            },
-            "error": function (ex) {
-                checkLogin(false);
-            }
-        });
-    }
-
-    /**
      * 登出
      */
     logout() {
@@ -109,7 +90,8 @@ class Nav extends Component {
                             })}>
                             <li>
                                 <Link to={`/user/${userInfo._id}`} className="user-head-link">
-                                    <img src={userInfo.avatarUrl} title={userInfo.name} className="img-rounded user-head" />
+                                    <img src={userInfo.avatarUrl} title={userInfo.name}
+                                         className="img-rounded user-head"/>
                                 </Link>
                             </li>
                         </ul>

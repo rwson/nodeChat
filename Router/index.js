@@ -20,35 +20,48 @@ module.exports = (app, socket) => {
      * 验证用户是否登录
      */
     app.get("/api/validate", (req, res, next) => {
-        try {
-            console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-            //console.log(req.session.userId);
-            let userId = req.session.userId;
-            console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-            if (!userId) {
-                return res.status(401)
-                    .send({
-                        "status": "error"
-                    })
-                    .end();
-            }
-            //
-            //UserController.findUserById(userId)
-            //    .then((user) => {
-            //        return res.status(200)
-            //            .send({
-            //                "status": "success",
-            //                "user": user
-            //            })
-            //            .end();
-            //    })
-            //    .catch((ex) => {
-            //        return _errorHandler(res, ex, next);
-            //    });
-        }catch(e){
-            console.log("查询用户出错!");
-            console.log("出错啦!");
-        }
+
+        res.status(401)
+            .send({
+                "status": "error"
+            })
+            .end();
+        //try {
+        //    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        //    //console.log(req.session.userId);
+        //    let user = req.session.user;
+        //    console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+        //    if (!user) {
+        //        return res.status(401)
+        //            .send({
+        //                "status": "error"
+        //            })
+        //            .end();
+        //    }
+        //
+        //    res.status(200)
+        //        .send({
+        //            "status": "success",
+        //            "user": user
+        //        })
+        //        .end();
+        //
+        //    //UserController.findUserById(userId)
+        //    //    .then((user) => {
+        //    //        return res.status(200)
+        //    //            .send({
+        //    //                "status": "success",
+        //    //                "user": user
+        //    //            })
+        //    //            .end();
+        //    //    })
+        //    //    .catch((ex) => {
+        //    //        return _errorHandler(res, ex, next);
+        //    //    });
+        //} catch (e) {
+        //    console.log("查询用户出错!");
+        //    console.log("出错啦!");
+        //}
     });
 
     /**
@@ -59,7 +72,7 @@ module.exports = (app, socket) => {
         UserController.findByEmailOrCreate(email).then((user) => {
             let userId = user._id;
             UserController.online(userId).then((user) => {
-                req.session.userId = userId;
+                req.session.userId = user;
                 res.status(200)
                     .send({
                         "status": "success",
@@ -68,9 +81,9 @@ module.exports = (app, socket) => {
                     .end();
             });
         })
-        .catch((ex) => {
-            return _errorHandler(res, ex, next);
-        });
+            .catch((ex) => {
+                return _errorHandler(res, ex, next);
+            });
     });
 
     /**

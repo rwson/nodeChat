@@ -9,6 +9,7 @@ import { Route,Link,IndexRoute } from "react-router";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import * as Actions from "../actions";
+import * as netWorkApi from "../netWorkApi";
 
 
 import {
@@ -33,7 +34,23 @@ class App extends Component {
         super(props);
     }
 
-    
+    /**
+     * 组件即将被实例化完成
+     */
+    componentWillMount() {
+        const { checkLogin } = this.props;
+        //  检测用户是否登录
+        netWorkApi.httpGetRequest({
+            "url": netWorkApi.Urls.checkLogin,
+            "context": this,
+            "success": function (data) {
+                checkLogin(true);
+            },
+            "error": function (ex) {
+                checkLogin(false);
+            }
+        });
+    }
 
     /**
      * 渲染组件布局
