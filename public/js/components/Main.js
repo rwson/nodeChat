@@ -7,7 +7,7 @@
 import React,{Component} from "react";
 import {Route,Link} from "react-router";
 
-export class Main extends Component {
+export default class Main extends Component {
 
     constructor(props) {
         super(props);
@@ -15,7 +15,9 @@ export class Main extends Component {
 
     render() {
         return (
-            <div className="main-index"></div>
+            <div className="main-index">
+                <h1>Main</h1>
+            </div>
         );
     }
 

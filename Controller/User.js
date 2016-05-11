@@ -73,6 +73,13 @@ module.exports = {
         return promise;
     },
 
+    "addFriend": function (userId, friendId) {
+
+    },
+
+    "deleteFriend": function (userId, friendId) {
+    },
+
     /**
      * 用户加入一个房间
      * @param userId    用户id

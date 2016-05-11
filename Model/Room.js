@@ -7,12 +7,12 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const Room = new Schema({
-        "name": String,
-        "users": [],
-        "createAt": {
-            "type": Date,
-            "default": Date.now
-        }
-    });
+    "name": String,
+    "users": [],
+    "createAt": {
+        "type": Date,
+        "default": Date.now
+    }
+});
 
 module.exports = Room;

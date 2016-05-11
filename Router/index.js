@@ -4,7 +4,8 @@
 
 "use strict";
 
-let Controller = require("../Controller");
+const Controller = require("../Controller");
+const path = require("path");
 
 const UserController = Controller.User;
 const RoomController = Controller.Room;
@@ -21,12 +22,14 @@ module.exports = (app, socket) => {
     app.get("/api/validate", (req, res, next) => {
         let userId = req.session.userId;
         if (!userId) {
-            return res.send(401);
+            return res.send(401, {
+                "status": "error"
+            });
         }
         UserController.findUserById(userId)
             .then((user) => {
                 return res.send(200, {
-                    "msg": "success",
+                    "status": "success",
                     "user": user
                 });
             })
@@ -43,6 +46,7 @@ module.exports = (app, socket) => {
             UserController.online(userId).then((user) => {
                 req.session.userId = userId;
                 res.send(200, {
+                    "status": "success",
                     "user": user
                 });
             });
@@ -57,15 +61,17 @@ module.exports = (app, socket) => {
         UserController.offline(userId)
             .then(() => {
                 req.session.userId = null;
-                return res.send(200);
+                return res.send(200, {
+                    "status": "success"
+                });
             }).catch((ex) => _errorHandler(res, ex, next));
     });
 
     /**
      * SPA主页
      */
-    app.get("/", (req, res) => {
-        res.sendfile(__dirname + "public/index.html");
+    app.use((req, res) => {
+        res.sendfile(path.resolve("./public/index.html"));
     });
 };
 
@@ -76,7 +82,9 @@ module.exports = (app, socket) => {
  */
 function _errorHandler(res, ex, next) {
     if (ex) {
-        res.send(500, ex);
+        res.send(500, Object.assign({}, ex, {
+            "status": "error"
+        }));
         next();
     }
 }

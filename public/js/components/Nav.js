@@ -24,6 +24,10 @@ class Nav extends Component {
 
     }
 
+    /**
+     * 渲染导航布局
+     * @returns {XML}
+     */
     render() {
         const { curRoute } = this.props;
         return (
@@ -35,24 +39,24 @@ class Nav extends Component {
                     <nav id="bs-navbar" className="collapse navbar-collapse">
                         <ul className="nav navbar-nav">
                             <li className={classname({
-                                "active":curRoute == "/"
+                                "active":(curRoute == "/" || curRoute == "")
                             })}>
                                 <Link to="/">首页</Link>
                             </li>
                             <li className={classname({
-                                "active":curRoute == "/login"
+                                "active":curRoute == "login"
                             })}>
                                 <Link to="/login">登录</Link>
                             </li>
-                            <li  className={classname({
-                                "active":curRoute == "/rooms"
+                            <li className={classname({
+                                "active":(curRoute == "rooms" || curRoute == "room")
                             })}>
-                                <Link to="/room">房间列表</Link>
+                                <Link to="/rooms">房间列表</Link>
                             </li>
                             <li className={classname({
-                                "active":curRoute == "/friends"
+                                "active":curRoute == "my"
                             })}>
-                                <Link to="/friends">我的好友</Link>
+                                <Link to="/my">我的</Link>
                             </li>
                             <li>
                                 <a href="javascript:;" onClick={this.logout()}>登出</a>

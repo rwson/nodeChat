@@ -6,10 +6,16 @@
 
 import Main from "./Main";
 import Login from "./Login";
+import My from "./My";
 import Nav from "./Nav";
+import Room from "./Room";
+import Rooms from "./Rooms";
 
-export default {
+export {
     Main,
     Login,
-    Nav
+    My,
+    Nav,
+    Room,
+    Rooms,
 };

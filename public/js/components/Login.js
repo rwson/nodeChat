@@ -7,7 +7,7 @@
 import React,{Component} from "react";
 import {Route,Link} from "react-router";
 
-export class Login extends Component {
+export default class Login extends Component {
 
     constructor(props) {
         super(props);
@@ -15,7 +15,9 @@ export class Login extends Component {
 
     render() {
         return (
-            <div className="login-area"></div>
+            <div className="login-area">
+                Login
+            </div>
         );
     }
 

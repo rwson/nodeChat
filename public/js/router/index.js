@@ -13,7 +13,10 @@ import {routeActions} from "react-router-redux";
 import {
     Main,
     Login,
-    Nav
+    My,
+    Nav,
+    Room,
+    Rooms
 } from "../components";
 
 /**
@@ -35,10 +38,13 @@ class App extends Component {
      */
     render() {
         const {content} = this.props;
+
+        console.log(content);
+
         return (
             <div className="body-container">
                 <Nav />
-                <div className="container">
+                <div className="container main-container">
                     {content}
                 </div>
             </div>
@@ -55,6 +61,9 @@ export default function AppRouters() {
         <Route path="/" component={App}>
             <IndexRoute components={{content: Main}}/>
             <Route path="login" components={{content: Login}}/>
+            <Route path="my" components={{content: My}}/>
+            <Route path="room/:id" components={{content: Room}}/>
+            <Route path="rooms" components={{content: Rooms}}/>
         </Route>
     );
 }

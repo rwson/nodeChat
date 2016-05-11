@@ -19,6 +19,7 @@ import reducers from "./reducers";
 import AppRouters from "./router";
 
 import "../css/bootstrap.min.css";
+import "../css/style.css";
 
 const reducer = combineReducers({
     reducers,
