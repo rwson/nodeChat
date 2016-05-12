@@ -10,6 +10,9 @@ import classname from "classname";
 import * as Actions from "../actions";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
+
+const socket = require("socket.io-client");
+
 class Main extends Component {
 
     constructor(props) {

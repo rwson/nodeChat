@@ -10,11 +10,18 @@ import classname from "classname";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import * as Actions from "../actions";
+import { SOCKET_ADDRESS } from "../constants";
+
+const socket = require("socket.io-client");
 
 class Room extends Component {
 
     constructor(props) {
         super(props);
+        this.state = {
+            "users": [],
+            "messages": []
+        };
     }
 
     /**

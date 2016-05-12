@@ -7,7 +7,12 @@
 export default ({
 
     //  socket配置地址
-    "SOCKET_ADDRESS": "http://127.0.0.1:4000",
+    "SOCKET_ADDRESS": {
+        "main": "http://127.0.0.1:4000",
+        "rooms": "http://127.0.0.1:4000/rooms",
+        "room": "http://127.0.0.1:4000/room",
+        "my": "http://127.0.0.1:4000/my"
+    },
 
     //  检测用户是否登录
     "CHECK_LOGIN": "CHECK_LOGIN",

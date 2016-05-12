@@ -4,7 +4,7 @@
 
 "use strict";
 
-import { CHECK_LOGIN,LOGIN, LOGOUT, USER_OFFLINE, JOIN_ROOM, LEAVE_ROOM, POST_MESSAGE } from "../constants";
+import { CHECK_LOGIN,LOGIN, LOGOUT, USER_OFFLINE } from "../constants";
 
 /**
  * 检测用户是否登录
@@ -48,8 +48,4 @@ export function userOffline() {
     return {
         "type": USER_OFFLINE
     };
-}
-
-export function getRooms() {
-
 }

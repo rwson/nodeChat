@@ -4,9 +4,7 @@
 
 "use strict";
 
-import { SOCKET_ADDRESS } from "../constants";
 
-const socket = require("socket.io-client");
 const io = socket(SOCKET_ADDRESS);
 
 /**
@@ -24,6 +22,13 @@ io.on("error occurred", (ex) => {
     console.log(ex);
     console.groupEnd();
 });
+
+io.emit("get room rooms",(data) => {
+});
+
+export function getAllRooms(callback) {
+    io.emit("get room messages");
+}
 
 
 /**

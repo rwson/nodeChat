@@ -10,11 +10,17 @@ import classname from "classname";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import * as Actions from "../actions";
+import { SOCKET_ADDRESS } from "../constants";
+
+const socket = require("socket.io-client");
 
 class Rooms extends Component {
 
     constructor(props) {
         super(props);
+        this.state = {
+            "rooms": []
+        };
     }
 
     /**
@@ -22,14 +28,12 @@ class Rooms extends Component {
      */
     componentWillMount() {
         const {} = this.props;
-
     }
 
     /**
      * 获取所有房间
      */
     getRooms() {
-
     }
 
     render() {

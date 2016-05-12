@@ -15,7 +15,7 @@ module.exports = (socket) => {
     /**
      *  添加新房间
      */
-    socket.on("create room",(data) => {
+    socket.on("create room", (data) => {
         console.log(data);
     });
 
@@ -33,11 +33,7 @@ module.exports = (socket) => {
                 socket.emit("join success", {
                     "message": "加入房间成功"
                 });
-            }).catch((ex) => {
-                socket.emit("error occurred", {
-                    "error": ex
-                });
-            });
+            }).catch((ex) => _socketException(socket, ex));
     });
 
     /**
@@ -50,43 +46,56 @@ module.exports = (socket) => {
                     "users": users
                 });
             })
-            .catch((ex) => {
-                socket.emit("error occurred", {
-                    "error": ex
-                });
-            });
+            .catch((ex) => _socketException(socket, ex));
     });
 
     /**
      * 接收到消息
      */
-    socket.on("Message", (message) => {
+    socket.on("post message", (message) => {
         MessageController.postNew(message)
             .then((message) => {
                 socket.emit("post success");
             })
-            .catch((ex) => {
-                socket.emit("error occurred", {
-                    "error": ex
+            .catch((ex) => _socketException(socket, ex));
+    });
+
+    /**
+     * 获取所有房间
+     */
+    socket.on("get all rooms", () => {
+        RoomController.getRooms()
+            .then((rooms) => {
+                socket.emit("room list", {
+                    "rooms": rooms
                 });
-            });
+            })
+            .catch((ex) => _socketException(socket, ex));
     });
 
     /**
      * 根据id获取房间里面所有消息
      */
-    socket.on("getRoomMessages", (roomId) => {
+    socket.on("get room rooms", (roomId) => {
         MessageController.getMessagesByRoomId(roomId)
             .then((messages) => {
-                socket.emit("all messages", {
+                socket.emit("get room rooms", {
                     "messages": messages
                 });
             })
-            .catch((ex) => {
-                socket.emit("error occurred", {
-                    "error": ex
-                });
-            });
+            .catch((ex) => _socketException(socket, ex));
     });
 
 };
+
+/**
+ * socket异常统一处理
+ * @param socket    socket实例
+ * @param ex        异常对象
+ * @private
+ */
+function _socketException(socket, ex) {
+    socket.emit("error occurred", {
+        "error": ex
+    });
+}
