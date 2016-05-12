@@ -78,13 +78,75 @@ module.exports = {
     },
 
     /**
+     * 请求添加对方好友
+     * @param userId    用户id
+     * @param targetId  目标用户id
+     * @returns {Promise}
+     */
+    "requestFriend": function (userId, targetId) {
+        var promise = new Promise((resolve, reject) => {
+            this.findUserById(targetId)
+                .then((user) => {
+                    if (!user.friendRequest) {
+                        user.friendRequest = [];
+                    }
+                    user.friendRequest.push(userId);
+                    //  更新对方数据并且保存
+                    user.save((ex, user) => {
+                        if (ex) {
+                            reject(ex);
+                        } else {
+                            resolve(user);
+                        }
+                    });
+                })
+                .catch((ex) => {
+                    reject(ex);
+                });
+        });
+        return promise;
+    },
+
+    /**
      * 添加好友
      * @param userId        用户id
      * @param friendId      好友id
      * @returns {Promise}
      */
     "addFriend": function (userId, friendId) {
-        var promise = new Promise();
+        var promise = new Promise((resolve, reject) => {
+            //  先查询用户
+            this.findUserById((userId))
+                .then((user) => {
+                    if (user) {
+                        //  再查询请求用户
+                        this.findUserById(friendId)
+                            .then((Fuser) => {
+                                let index = user.friendRequest.indexOf(friendId);
+                                if (!user.friends) {
+                                    user.friends = [];
+                                }
+                                user.friends.push(Fuser);
+                                if (index > -1) {
+                                    user.friendRequest.splice(index, 1);
+                                }
+                                //  更新用户的一些信息并且保存
+                                user.save((ex, user) => {
+                                    if (ex) {
+                                        reject(ex);
+                                    } else {
+                                        resolve(user);
+                                    }
+                                });
+                            })
+                            .catch((ex) => {
+                                reject(ex);
+                            });
+                    }
+                }).catch((ex) => {
+                    reject(ex);
+                });
+        });
         return promise;
     },
 
@@ -95,7 +157,24 @@ module.exports = {
      * @returns {Promise}
      */
     "deleteFriend": function (userId, friendId) {
-        var promise = new Promise();
+        var promise = new Promise((resolve, reject) => {
+            this.findUserById(userId)
+                .then((user) => {
+                    user.friends = user.friends.filter((item) => {
+                        return item._id != friendId;
+                    });
+                    user.save((ex, user) => {
+                        if (ex) {
+                            reject(ex);
+                        } else {
+                            resolve(user);
+                        }
+                    });
+                })
+                .catch((ex) => {
+                    reject(ex);
+                });
+        });
         return promise;
     },
 
