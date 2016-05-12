@@ -11,7 +11,6 @@ import { connect } from "react-redux";
 import * as Actions from "../actions";
 import * as netWorkApi from "../netWorkApi";
 
-
 import {
     Main,
     Login,
@@ -32,24 +31,6 @@ class App extends Component {
      */
     constructor(props) {
         super(props);
-    }
-
-    /**
-     * 组件即将被实例化完成
-     */
-    componentWillMount() {
-        const { checkLogin } = this.props;
-        //  检测用户是否登录
-        netWorkApi.httpGetRequest({
-            "url": netWorkApi.Urls.checkLogin,
-            "context": this,
-            "success": function (data) {
-                checkLogin(true);
-            },
-            "error": function (ex) {
-                checkLogin(false);
-            }
-        });
     }
 
     /**

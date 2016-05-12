@@ -10,7 +10,7 @@ import {createStore,combineReducers,compose,applyMiddleware} from "redux";
 import {Provider} from "react-redux";
 import {Router, Route} from "react-router";
 import thunk from "redux-thunk";
-import createBrowserHistory from "history/lib/createBrowserHistory";
+import history from "./history";
 import {routerReducer,routerMiddleware} from "react-router-redux";
 
 import "whatwg-fetch";
@@ -30,8 +30,6 @@ const store = createStore(
     reducer,
     applyMiddleware(thunk)
 );
-
-const history = createBrowserHistory();
 
 ReactDOM.render(<div>
     <Provider store={store}>

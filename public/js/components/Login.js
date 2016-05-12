@@ -8,6 +8,7 @@ import React,{ Component } from "react";
 import {Route,Link} from "react-router";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
+import history from "../history";
 import * as Actions from "../actions";
 import * as netWorkApi from "../netWorkApi";
 
@@ -21,7 +22,7 @@ class Login extends Component {
      * 登录处理函数
      */
     login() {
-        const { login } = this.props;
+        const { userLogin } = this.props;
         const eleInput = this.refs["register-email"];
         const email = eleInput.value;
         if (!/^(\w)+(\.\w+)*@(\w)+((\.\w+)+)$/.test(email) && email.length < 9) {
@@ -35,7 +36,8 @@ class Login extends Component {
             "url": `${netWorkApi.Urls.login}/${email}`,
             "context": this,
             "success": function (user) {
-                login(user.user);
+                userLogin(user.user);
+                history.replaceState(null, "/");
             },
             "error": function (ex) {
                 alert(ex.message);

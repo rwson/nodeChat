@@ -4,8 +4,9 @@
 
 "use strict";
 
-const Controller = require("../Controller");
 const path = require("path");
+const Controller = require("../Controller");
+const Util = require("../Util");
 
 const UserController = Controller.User;
 const RoomController = Controller.Room;
@@ -20,48 +21,20 @@ module.exports = (app, socket) => {
      * 验证用户是否登录
      */
     app.get("/api/validate", (req, res, next) => {
+        let user = req.session.user;
+        if (Util.isEmpty(user)) {
+            res.status(401)
+                .send({
+                    "status": "error"
+                });
+            return;
+        }
 
-        res.status(401)
+        res.status(200)
             .send({
-                "status": "error"
-            })
-            .end();
-        //try {
-        //    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-        //    //console.log(req.session.userId);
-        //    let user = req.session.user;
-        //    console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-        //    if (!user) {
-        //        return res.status(401)
-        //            .send({
-        //                "status": "error"
-        //            })
-        //            .end();
-        //    }
-        //
-        //    res.status(200)
-        //        .send({
-        //            "status": "success",
-        //            "user": user
-        //        })
-        //        .end();
-        //
-        //    //UserController.findUserById(userId)
-        //    //    .then((user) => {
-        //    //        return res.status(200)
-        //    //            .send({
-        //    //                "status": "success",
-        //    //                "user": user
-        //    //            })
-        //    //            .end();
-        //    //    })
-        //    //    .catch((ex) => {
-        //    //        return _errorHandler(res, ex, next);
-        //    //    });
-        //} catch (e) {
-        //    console.log("查询用户出错!");
-        //    console.log("出错啦!");
-        //}
+                "status": "success",
+                "user": user
+            });
     });
 
     /**
@@ -72,13 +45,12 @@ module.exports = (app, socket) => {
         UserController.findByEmailOrCreate(email).then((user) => {
             let userId = user._id;
             UserController.online(userId).then((user) => {
-                req.session.userId = user;
+                req.session.user = user;
                 res.status(200)
                     .send({
                         "status": "success",
                         "user": user
-                    })
-                    .end();
+                    });
             });
         })
             .catch((ex) => {
@@ -90,15 +62,14 @@ module.exports = (app, socket) => {
      * 用户登出请求
      */
     app.post("/api/logout", (req, res, next) => {
-        let userId = req.session.userId;
+        let userId = req.session.user.userId;
         UserController.offline(userId)
             .then(() => {
-                req.session.userId = null;
+                req.session.user = null;
                 res.status(200)
                     .send({
                         "status": "success"
-                    })
-                    .end();
+                    });
             })
             .catch((ex) => {
                 return _errorHandler(res, ex, next);
@@ -109,7 +80,7 @@ module.exports = (app, socket) => {
      * SPA主页
      */
     app.use((req, res) => {
-        res.sendfile(path.resolve("./public/index.html"));
+        res.sendFile(path.resolve("./public/index.html"));
     });
 };
 
@@ -124,7 +95,6 @@ function _errorHandler(res, ex, next) {
         res.status(500)
             .send(500, Object.assign({}, ex, {
                 "status": "error"
-            }))
-            .end();
+            }));
     }
 }

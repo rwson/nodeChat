@@ -23,7 +23,7 @@ export function checkLogin(online) {
  * @param userInfo      后端返回的用户信息
  * @returns {{type: *}}
  */
-export function login(userInfo) {
+export function userLogin(userInfo) {
     return {
         "type": LOGIN,
         "userInfo": userInfo
@@ -34,7 +34,7 @@ export function login(userInfo) {
  * 登出成功
  * @returns {{type: *}}
  */
-export function logot() {
+export function userLogout() {
     return {
         "type": LOGOUT
     };
@@ -44,7 +44,7 @@ export function logot() {
  * 用户下线
  * @returns {{type: *}}
  */
-export function offline() {
+export function userOffline() {
     return {
         "type": USER_OFFLINE
     };

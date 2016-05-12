@@ -22,7 +22,7 @@ export default function reducer(state = initialState, action = {}) {
         //  检测用户登录
         case CHECK_LOGIN:
             return objectAssign({}, state, {
-                "online": action.online
+                "online": action
             });
             break;
 

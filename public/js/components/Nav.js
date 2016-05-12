@@ -9,6 +9,7 @@ import { Route,Link } from "react-router";
 import classname from "classname";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
+import history from "../history";
 import * as Actions from "../actions";
 import * as netWorkApi from "../netWorkApi";
 
@@ -19,23 +20,44 @@ class Nav extends Component {
     }
 
     /**
-     * 登出
+     * 组件即将被实例化完成
      */
-    logout() {
-        const { logout, offline } = this.props;
+    componentWillMount() {
+        const { checkLogin, userLogin } = this.props;
 
         //  检测用户是否登录
         netWorkApi.httpGetRequest({
             "url": netWorkApi.Urls.checkLogin,
             "context": this,
             "success": function (data) {
-
-                //  退出登录后,前端也下线
-                logout();
-                checkLogin(false);
-                offline();
+                checkLogin(true);
+                userLogin(data.user);
+                history.replaceState(null, "/");
             },
             "error": function (ex) {
+                checkLogin(false);
+            }
+        });
+    }
+
+    /**
+     * 登出
+     */
+    logout() {
+        const { userLogout, userOffline } = this.props;
+
+        //  检测用户是否登录
+        netWorkApi.httpPostRequest({
+            "url": netWorkApi.Urls.logout,
+            "context": this,
+            "success": function (data) {
+                //  退出登录后,前端也下线
+                userLogout();
+                checkLogin(false);
+                userOffline();
+            },
+            "error": function (ex) {
+                alert("退出登录失败!请重试!");
             }
         });
     }
@@ -81,7 +103,7 @@ class Nav extends Component {
                             <li className={classname({
                                 "hide-nav-item": !online
                             })}>
-                                <a href="javascript:;" onClick={this.logout()}>登出</a>
+                                <a href="javascript:;" onClick={this.logout.bind(this)}>登出</a>
                             </li>
                         </ul>
                         <ul className={classname({

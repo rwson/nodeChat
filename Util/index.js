@@ -10,16 +10,16 @@ module.exports = {
      * @param  {number} max 最大值
      * @return {number}     最后求出的随机数
      */
-    "random": function(min, max) {
-        return Math.floor(Math.random() * (max - min) + min);
+    "random": function (min, max) {
+        return Math.floor(Math.pow(Math.random(),2) * (max - min) + min);
     },
 
     /**
      * 输出一个指定格式的日期对象
-     * @param  {Date} date 	日期示例
+     * @param  {Date} date    日期示例
      * @return {object}
      */
-    "getDate": function(date) {
+    "getDate": function (date) {
         //	获取最后的日期对象
         var finalDate = date instanceof Date ? date : new Date(),
 
@@ -31,9 +31,9 @@ module.exports = {
             second = this.toDouble(finalDate.getSeconds());
 
         return {
-        	"year":year,
-        	"month":month,
-        	"date":date,
+            "year": year,
+            "month": month,
+            "date": date,
             "yyyy-MM-dd": year + "-" + month + "-" + day,
             "yyyy-MM-dd HH:mm:ss": year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second
         };
@@ -42,17 +42,43 @@ module.exports = {
     /**
      * 生成一个随机id
      */
-    "getRandomId":function(){
-    	return (Math.random() * 100 + (+(new Date()))).toString(16);
+    "getRandomId": function () {
+        return (Math.random() * 100 + (+(new Date()))).toString(16);
     },
 
     /**
      * [0-9] => ["00"..."09"]
-     * @param  {number} num 	    要被转换的数字    
+     * @param  {number} num        要被转换的数字
      * @return {string/number}      转换后的结果
      */
-    "toDouble": function(num) {
+    "toDouble": function (num) {
         return num < 10 ? ("0" + num) : num;
+    },
+
+    /**
+     * 获取对象的原型class
+     * @param obj   对象
+     * @returns {string}
+     */
+    "getProType": function (obj) {
+        return Object.prototype.toString.call(obj).split(" ")[1].replace("]", "").toLowerCase();
+    },
+
+    /**
+     * 判断对象是否为空
+     * @param obj   被判断的对象
+     * @returns {boolean}
+     */
+    "isEmpty": function (obj) {
+        var _res = false;
+        if(["null","undefined"].indexOf(this.getProType(obj)) > -1) {
+            _res = true;
+        } else if (this.getProType(obj) == "object") {
+            _res = !Object.keys(obj).length;
+        } else {
+            _res = !obj.length;
+        }
+        return _res;
     }
 
 };

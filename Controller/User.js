@@ -34,8 +34,9 @@ module.exports = {
                 UserModel.findById(_userId, (ex, user) => {
                     if (ex) {
                         reject(ex);
+                    } else {
+                        resolve(user);
                     }
-                    resolve(user);
                 });
             } catch (e) {
                 console.log("出错了");
@@ -66,8 +67,7 @@ module.exports = {
                     user.save((ex, user) => {
                         if (ex) {
                             reject(ex);
-                        }
-                        if (user.length) {
+                        } else {
                             resolve(user);
                         }
                     });
@@ -114,8 +114,9 @@ module.exports = {
             }, (ex, user) => {
                 if (ex) {
                     reject(ex);
+                } else {
+                    resolve(user);
                 }
-                resolve(user);
             });
         });
         return promise;
@@ -136,8 +137,9 @@ module.exports = {
                 }, (ex, user) => {
                     if (ex) {
                         reject(ex);
+                    } else {
+                        resolve(user);
                     }
-                    resolve(user);
                 });
             });
         });
@@ -159,8 +161,9 @@ module.exports = {
             }, (ex, user) => {
                 if (ex) {
                     reject(ex);
+                } else {
+                    resolve(user);
                 }
-                resolve(user);
             });
         });
         return promise;
@@ -180,8 +183,9 @@ module.exports = {
             }, (ex, user) => {
                 if (ex) {
                     reject(ex);
+                } else {
+                    resolve(user);
                 }
-                resolve(user);
             });
         });
         return promise;
@@ -198,8 +202,9 @@ module.exports = {
             }, (ex, users) => {
                 if (ex) {
                     reject(ex);
+                } else {
+                    resolve(users);
                 }
-                resolve(users);
             });
         });
         return promise;
@@ -217,8 +222,9 @@ function _readFile(path) {
         fs.readdir(path, (ex, files) => {
             if (ex) {
                 reject(ex);
+            } else {
+                resolve(files);
             }
-            resolve(files);
         });
     });
     return prromise;

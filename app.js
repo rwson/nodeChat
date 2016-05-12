@@ -14,6 +14,7 @@ const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const bodyParser = require("body-parser");
 const debug = require("debug")("nodeChat:server");
+const MongoStore = require('connect-mongo')(session);
 const socketIo = require("socket.io");
 const router = require("./Router");
 const config = require("./config");
@@ -37,11 +38,15 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(session({
     "secret": config.cookieSecret,
-    "cookie": {
-        "maxAge": config.maxAge
-    },
-    key: config.db,
-    store: require("mongoose-session")(mongoose)
+    "maxAge": config.maxAge,
+    "key": config.db,
+    "resave": false,
+    "saveUninitialized": false,
+    "store": new MongoStore({
+        "db": config.db,
+        "url": config.database,
+        "autoRemove": "disabled"
+    })
 }));
 app.use(expressPromise());
 
