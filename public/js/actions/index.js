@@ -49,3 +49,7 @@ export function userOffline() {
         "type": USER_OFFLINE
     };
 }
+
+export function getRooms() {
+
+}

@@ -18,17 +18,48 @@ class Rooms extends Component {
     }
 
     /**
+     * 组件即将被实例化完成
+     */
+    componentWillMount() {
+        const {} = this.props;
+
+    }
+
+    /**
      * 获取所有房间
      */
     getRooms() {
+
     }
 
     render() {
-        const {rooms} = this.props;
+        const { rooms } = this.props;
 
         return (
             <div className="room-lists">
-                <h1>Room List</h1>
+                <h1>房间列表</h1>
+                <ul className="list-group">
+                    <li className="list-group-item">
+                        <span className="badge">14</span>
+                        Cras justo odio
+                    </li>
+                    <li className="list-group-item">
+                        <span className="badge">14</span>
+                        Cras justo odio
+                    </li>
+                    <li className="list-group-item">
+                        <span className="badge">14</span>
+                        Cras justo odio
+                    </li>
+                    <li className="list-group-item">
+                        <span className="badge">14</span>
+                        Cras justo odio
+                    </li>
+                    <li className="list-group-item">
+                        <span className="badge">14</span>
+                        Cras justo odio
+                    </li>
+                </ul>
             </div>
         );
     }

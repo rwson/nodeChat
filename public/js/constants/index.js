@@ -7,7 +7,7 @@
 export default ({
 
     //  socket配置地址
-    "SOCKET_ADDRESS": "http://127.0.0.1:3000",
+    "SOCKET_ADDRESS": "http://127.0.0.1:4000",
 
     //  检测用户是否登录
     "CHECK_LOGIN": "CHECK_LOGIN",
@@ -20,6 +20,12 @@ export default ({
 
     //  用户下线
     "USER_OFFLINE": "USER_OFFLINE",
+
+    //  加入房间
+    "FETCH_ROOM": "FETCH_ROOM",
+
+    //  创建房间
+    "CREATE_ROOM": "CREATE_ROOM",
 
     //  加入房间
     "JOIN_ROOM": "JOIN_ROOM",

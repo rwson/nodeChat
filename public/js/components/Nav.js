@@ -106,10 +106,9 @@ class Nav extends Component {
                                 <a href="javascript:;" onClick={this.logout.bind(this)}>登出</a>
                             </li>
                         </ul>
-                        <ul className={classname({
-                                "nav navbar-nav navbar-right": true,
+                        <ul className={`nav navbar-nav navbar-right ${classname({
                                 "hide-nav-item": !Object.keys(userInfo).length
-                            })}>
+                            })}`}>
                             <li>
                                 <Link to={`/user/${userInfo._id}`} className="user-head-link">
                                     <img src={userInfo.avatarUrl} title={userInfo.name}

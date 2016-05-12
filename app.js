@@ -15,11 +15,12 @@ const session = require("express-session");
 const bodyParser = require("body-parser");
 const debug = require("debug")("nodeChat:server");
 const MongoStore = require('connect-mongo')(session);
-const socketIo = require("socket.io");
-const router = require("./Router");
 const config = require("./config");
+const router = require("./Router");
+const socketIo = require("socket.io");
+const socketEvents = require("./Socket");
 
-//  mongodb分页查询
+//  mongodb支持分页查询
 require("./_.mongoose.page");
 
 const app = express();
@@ -53,13 +54,14 @@ app.use(expressPromise());
 //  应用路由模块
 router(app);
 
+//  开发环境
 if (app.get("env") === "development") {
     app.use((err, req, res, next) => {
-        res.status(err.status || 500);
-        res.send(500, {
-            message: err.message,
-            error: err
-        });
+        res.status(err.status || 500)
+            .send(500, {
+                message: err.message,
+                error: err
+            });
     });
 }
 
@@ -68,10 +70,9 @@ let io = socketIo.listen(app.listen(app.get("port"), () => {
     console.log("app listen on " + app.get("port") + "...");
 }));
 
-
+//  socket连接成功
 io.on("connection", (socket) => {
-    socket.emit("news", {hello: "world"});
-    socket.on("test event", function (data) {
-        console.log(data);
-    });
+
+    //  初始化socket相关配置
+    socketEvents(socket);
 });

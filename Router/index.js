@@ -15,7 +15,7 @@ const MessageController = Controller.Message;
 /**
  * 路由控制模块
  */
-module.exports = (app, socket) => {
+module.exports = (app) => {
 
     /**
      * 验证用户是否登录

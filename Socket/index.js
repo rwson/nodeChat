@@ -13,16 +13,28 @@ const MessageController = Controller.Message;
 module.exports = (socket) => {
 
     /**
+     *  添加新房间
+     */
+    socket.on("create room",(data) => {
+        console.log(data);
+    });
+
+    /**
      * 新用户加入
      */
-    socket.on("useJoin", (userId, roomId) => {
+    socket.on("use join", (data) => {
+
+        console.log(data);
+
+        let userId = data.userId;
+        let roomId = data.roomId;
         RoomController.joinRoom(userId, roomId)
             .then((users) => {
-                socket.emit("Success", {
+                socket.emit("join success", {
                     "message": "加入房间成功"
                 });
             }).catch((ex) => {
-                socket.emit("Error", {
+                socket.emit("error occurred", {
                     "error": ex
                 });
             });
@@ -31,15 +43,15 @@ module.exports = (socket) => {
     /**
      * 获取在线用户
      */
-    socket.on("getOnlineUsers", () => {
+    socket.on("get online users", () => {
         UserController.getOnlineUsers()
             .then((users) => {
-                socket.emit("Users", {
+                socket.emit("users", {
                     "users": users
                 });
             })
             .catch((ex) => {
-                socket.emit("Error", {
+                socket.emit("error occurred", {
                     "error": ex
                 });
             });
@@ -51,10 +63,10 @@ module.exports = (socket) => {
     socket.on("Message", (message) => {
         MessageController.postNew(message)
             .then((message) => {
-                socket.emit("postSuccess");
+                socket.emit("post success");
             })
             .catch((ex) => {
-                socket.emit("Error", {
+                socket.emit("error occurred", {
                     "error": ex
                 });
             });
@@ -66,12 +78,12 @@ module.exports = (socket) => {
     socket.on("getRoomMessages", (roomId) => {
         MessageController.getMessagesByRoomId(roomId)
             .then((messages) => {
-                socket.emit("AllMessages", {
+                socket.emit("all messages", {
                     "messages": messages
                 });
             })
             .catch((ex) => {
-                socket.emit("Error", {
+                socket.emit("error occurred", {
                     "error": ex
                 });
             });

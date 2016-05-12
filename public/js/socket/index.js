@@ -1,0 +1,34 @@
+/**
+ * websocket相关事件暴露
+ */
+
+"use strict";
+
+import { SOCKET_ADDRESS } from "../constants";
+
+const socket = require("socket.io-client");
+const io = socket(SOCKET_ADDRESS);
+
+/**
+ * socket连接成功
+ */
+io.on("connect", () => {
+    console.log("socket握手成功!");
+});
+
+/**
+ * socket发生错误,控制台打印信息
+ */
+io.on("error occurred", (ex) => {
+    console.group("socket error");
+    console.log(ex);
+    console.groupEnd();
+});
+
+
+/**
+ * 创建一个房间
+ * @param name  房间名称
+ */
+export function createRoom(name) {
+}

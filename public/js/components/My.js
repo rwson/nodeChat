@@ -42,7 +42,7 @@ class My extends Component {
 
     render() {
         return (
-            <div>
+            <div className="user-info">
                 My
             </div>
         );
