@@ -12,7 +12,7 @@ import { connect } from "react-redux";
 import * as Actions from "../actions";
 import { SOCKET_ADDRESS } from "../constants";
 
-const socket = require("socket.io-client");
+const socket = require("socket.io-client")(SOCKET_ADDRESS.rooms);
 
 class Rooms extends Component {
 

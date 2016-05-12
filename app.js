@@ -70,9 +70,5 @@ let io = socketIo.listen(app.listen(app.get("port"), () => {
     console.log("app listen on " + app.get("port") + "...");
 }));
 
-//  socket连接成功
-io.on("connection", (socket) => {
-
-    //  初始化socket相关配置
-    socketEvents(socket);
-});
+//  初始化socket相关配置
+socketEvents(io);
