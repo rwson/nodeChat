@@ -287,19 +287,3 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Room);
-
-
-//<div className="media message-item">
-//    <div className="media-left">
-//        <img className="media-object poster-head-pic"
-//             src="http://localhost:4000/avatar/49.jpg"/>
-//    </div>
-//    <div className="media-body">
-//        <span className="media-heading poster-info">lallallalal</span>
-//        消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容
-//        消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容
-//        消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容
-//        消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容
-//        消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容
-//    </div>
-//</div>

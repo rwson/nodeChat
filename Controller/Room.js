@@ -17,7 +17,7 @@ module.exports = {
      * @returns {Promise}
      */
     "findRoomById": (roomId) => {
-        var promise = new Promise((resolve, reject) => {
+        let promise = new Promise((resolve, reject) => {
             RoomModel.findById(roomId, (ex, room) => {
                 if (ex) {
                     reject(ex);
@@ -35,7 +35,7 @@ module.exports = {
      * @returns {Promise}
      */
     "getRooms": (page = 1, pageSize = 10) => {
-        var promise = new Promise((resolve, reject) => {
+        let promise = new Promise((resolve, reject) => {
             RoomModel.find().paginate(page, pageSize, (ex, rooms, total) => {
                 if (ex) {
                     reject(ex);
@@ -53,7 +53,7 @@ module.exports = {
      * @returns {Promise}
      */
     "joinRoom": (roomId, userId) => {
-        var promise = new Promise((resolve, reject) => {
+        let promise = new Promise((resolve, reject) => {
             RoomModel.findById(roomId, (ex, room) => {
                 if (ex) {
                     reject(ex);
@@ -92,12 +92,17 @@ module.exports = {
      * @returns {Promise}
      */
     "leaveRoom": (roomId, userId) => {
-        var promise = new Promise((resolve, reject) => {
+        let users = [];
+        let promise = new Promise((resolve, reject) => {
             RoomModel.findById(roomId, (ex, room) => {
                 if (ex) {
                     reject(ex);
                 }
-                room.users = room.users.filter((user) => userId !== user.id);
+                users = room.users.filter((user) => {
+                    return userId !== user._id;
+                });
+                room.users = users;
+                console.log(room);
                 room.save((ex, room) => {
                     if (ex) {
                         reject(ex);
@@ -116,7 +121,7 @@ module.exports = {
      */
     "createRoom": (room) => {
         let Room = new RoomModel(room);
-        var promise = new Promise((resolve, reject) => {
+        let promise = new Promise((resolve, reject) => {
             Room.save((ex, room) => {
                 if (ex) {
                     reject(ex);
@@ -133,7 +138,7 @@ module.exports = {
      * @returns {Promise}
      */
     "deleteRoom": (id) => {
-        var promise = new Promise((resolve, reject) => {
+        let promise = new Promise((resolve, reject) => {
             RoomModel.findByIdAndRemove(id, (ex) => {
                 if (ex) {
                     reject(ex);

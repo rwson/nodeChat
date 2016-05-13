@@ -154,8 +154,21 @@ module.exports = (io) => {
                     .catch((ex) => _socketException(socket, ex));
             });
 
-            socket.on("leave room",(data) => {
-                RoomController.leaveRoom()
+            /**
+             * 用户离开房间事件
+             */
+            socket.on("leave room", (data) => {
+                console.log(data);
+                UserController.leaveRoom(data.userId)
+                    .then((user) => {
+                        //console.log(user);
+                        RoomController.leaveRoom(data.roomId, data.userId)
+                            .then(() => {
+                                console.log(`id为${data.userId}的用户离开房间成功!`);
+                            })
+                            .catch((ex) => _socketException(socket, ex));
+                    })
+                    .catch((ex) => _socketException(socket, ex));
             });
         });
 

@@ -15,9 +15,9 @@ module.exports = {
      * @returns {Promise}
      */
     "getMessagesByRoomId": (roomId) => {
-        var promise = new Promise((resolve, reject) => {
+        let promise = new Promise((resolve, reject) => {
             MessageModel.find({
-                "_roomId": roomId
+                "roomId": roomId
             }, null, {
                 "sort": {
                     "createAt": -1
@@ -39,8 +39,8 @@ module.exports = {
      * @returns {Promise}
      */
     "postNew": (message) => {
-        var promise = new Promise((resolve, reject) => {
-            var Message = new MessageModel();
+        let promise = new Promise((resolve, reject) => {
+            let Message = new MessageModel();
             Message.content = message.content;
             Message.creator = message.creator;
             Message._roomId = message.roomId;

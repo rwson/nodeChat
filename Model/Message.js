@@ -15,7 +15,7 @@ const Message = new Schema({
         "name": String,         //  用户名
         "avatarUrl": String     //  头像
     },
-    "_roomId": ObjectId,        //  所属房间id
+    "roomId": ObjectId,         //  所属房间id
     "createAt": {               //  发送时间
         "type": Date,
         "default": Date.now

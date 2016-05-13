@@ -10,7 +10,7 @@ const Util = require("../Util");
 const Model = require("../Model");
 const UserModel = Model.User;
 
-var avaList = [];
+let avaList = [];
 
 //	读取头像目录
 _readFile(Config.avatarPath).then((files) => {
@@ -29,7 +29,7 @@ module.exports = {
      * @returns {Promise}
      */
     "findUserById": (_userId) => {
-        var promise = new Promise((resolve, reject) => {
+        let promise = new Promise((resolve, reject) => {
             try {
                 UserModel.findById(_userId, (ex, user) => {
                     if (ex) {
@@ -51,7 +51,7 @@ module.exports = {
      * @returns {Promise}
      */
     "findByEmailOrCreate": (email) => {
-        var promise = new Promise((resolve, reject) => {
+        let promise = new Promise((resolve, reject) => {
             UserModel.find({"email": email}, (ex, user) => {
                 if (ex) {
                     reject(ex);
@@ -84,7 +84,7 @@ module.exports = {
      * @returns {Promise}
      */
     "requestFriend": (userId, targetId) => {
-        var promise = new Promise((resolve, reject) => {
+        let promise = new Promise((resolve, reject) => {
             this.findUserById(targetId)
                 .then((user) => {
                     if (!user.friendRequest) {
@@ -114,7 +114,7 @@ module.exports = {
      * @returns {Promise}
      */
     "addFriend": (userId, friendId) => {
-        var promise = new Promise((resolve, reject) => {
+        let promise = new Promise((resolve, reject) => {
             //  先查询用户
             this.findUserById((userId))
                 .then((user) => {
@@ -157,7 +157,7 @@ module.exports = {
      * @returns {Promise}
      */
     "deleteFriend": (userId, friendId) => {
-        var promise = new Promise((resolve, reject) => {
+        let promise = new Promise((resolve, reject) => {
             this.findUserById(userId)
                 .then((user) => {
                     user.friends = user.friends.filter((item) => {
@@ -185,10 +185,10 @@ module.exports = {
      * @returns {Promise}
      */
     "joinRoom": (userId, roomId) => {
-        var promise = new Promise((resolve, reject) => {
+        let promise = new Promise((resolve, reject) => {
             UserModel.findOneAndUpdate(userId, {
                 "$set": {
-                    "_roomId": roomId
+                    "roomId": roomId
                 }
             }, (ex, user) => {
                 if (ex) {
@@ -207,16 +207,20 @@ module.exports = {
      * @returns {Promise}
      */
     "leaveRoom": (userId) => {
-        var promise = new Promise((resolve, reject) => {
-            var promise = new Promise((resolve, reject) => {
+        console.log(userId);
+        console.log("-------------------");
+        let promise = new Promise((resolve, reject) => {
+            let promise = new Promise((resolve, reject) => {
                 UserModel.findByIdAndUpdate(userId, {
                     "$set": {
-                        "_roomId": ""
+                        "roomId": ""
                     }
                 }, (ex, user) => {
                     if (ex) {
+                        console.log(ex);
                         reject(ex);
                     } else {
+                        console.log(user);
                         resolve(user);
                     }
                 });
@@ -231,7 +235,7 @@ module.exports = {
      * @returns {Promise}
      */
     "online": (_userId) => {
-        var promise = new Promise((resolve, reject) => {
+        let promise = new Promise((resolve, reject) => {
             console.log();
             UserModel.findByIdAndUpdate(_userId, {
                 "$set": {
@@ -254,7 +258,7 @@ module.exports = {
      * @returns {Promise}
      */
     "offline": (_userId) => {
-        var promise = new Promise((resolve, reject) => {
+        let promise = new Promise((resolve, reject) => {
             UserModel.findOneAndUpdate(_userId, {
                 "$set": {
                     "online": false
@@ -276,9 +280,9 @@ module.exports = {
      * @returns {Promise}
      */
     "getOnlineUsers": (roomId) => {
-        var promise = new Promise((resolve, reject) => {
+        let promise = new Promise((resolve, reject) => {
             UserModel.find({
-                "_roomId": roomId,
+                "roomId": roomId,
                 "online": true
             }, (ex, users) => {
                 if (ex) {
@@ -299,7 +303,7 @@ module.exports = {
  * @returns {Promise}
  */
 function _readFile(path) {
-    var prromise = new Promise((resolve, reject) => {
+    let prromise = new Promise((resolve, reject) => {
         fs.readdir(path, (ex, files) => {
             if (ex) {
                 reject(ex);
