@@ -35,7 +35,6 @@ module.exports = (io) => {
              *  创建新房间
              */
             socket.on("create room", (data) => {
-                console.log("创建房间了!");
                 //  房间信息保存到数据库
                 RoomController.createRoom({
                     "creatorId": data.creatorId,
@@ -131,7 +130,6 @@ module.exports = (io) => {
                 console.log(`好!开始获取${data.roomId}房间里的消息`);
                 MessageController.getMessagesByRoomId(data.roomId)
                     .then((messages) => {
-                        //console.log(messages);
                         socket.emit("messages", {
                             "messages": messages
                         })
@@ -145,12 +143,19 @@ module.exports = (io) => {
             socket.on("post message", (data) => {
                 MessageController.postNew(data)
                     .then(() => {
-                        console.log("消息发送入库成功!");
-                        socket.broadcast.emit("get messages", {
-                            "roomId": data.roomId
-                        });
+                        MessageController.getMessagesByRoomId(data.roomId)
+                            .then((messages) => {
+                                socket.emit("messages", {
+                                    "messages": messages
+                                })
+                            })
+                            .catch((ex) => _socketException(socket, ex));
                     })
                     .catch((ex) => _socketException(socket, ex));
+            });
+
+            socket.on("leave room",(data) => {
+                RoomController.leaveRoom()
             });
         });
 
@@ -169,6 +174,7 @@ module.exports = (io) => {
  * @private
  */
 function _socketException(socket, ex) {
+    console.log("exception");
     socket.emit("error occurred", {
         "error": ex
     });

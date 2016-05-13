@@ -47,7 +47,7 @@ span.input-group-addon {
     right: 5%;
     top: 80px;
     bottom: 100px;
-    min-height: 400px;
+    min-height: 500px;
 }
 
 .room-messages {
@@ -108,8 +108,7 @@ span.input-group-addon {
     height: 200px;
     margin: 400px 0 0 0;
     position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    top: 100px;
+    bottom: 5%;
+    left: 5%;
+    top: 220px;
 }

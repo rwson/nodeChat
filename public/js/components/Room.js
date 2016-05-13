@@ -177,7 +177,6 @@ class Room extends Component {
          * 获取用户列表
          */
         socket.on("users", (data) => {
-            console.log(data);
             getUsers(data.users);
         });
 
@@ -185,12 +184,23 @@ class Room extends Component {
          * 获取消息
          */
         socket.on("messages", (data) => {
-            console.log(data);
             getMessages(data.messages);
         });
 
         //  绑定异常处理
         Util.socketException(socket);
+    }
+
+    /**
+     * 组件被销毁,用户离开房间
+     */
+    componentWillUnmount() {
+        const { userInfo } = this.props;
+        const { id } = this.props.params;
+        socket.emit("leave room", {
+            "userId": userInfo._id,
+            "roomId": id
+        });
     }
 
     /**

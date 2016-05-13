@@ -62,13 +62,23 @@ module.exports = {
                     room.users = [];
                 }
                 UserController.findUserById(userId).then((user) => {
-                    room.users.push(user);
-                    room.save((ex, room) => {
-                        if (ex) {
-                            reject(ex);
+                    let flag = false;
+                    room.users.forEach((user) => {
+                        if (!flag && user._id == userId) {
+                            flag = true;
                         }
-                        resolve(room);
                     });
+                    if (user && !flag) {
+                        room.users.push(user);
+                        room.save((ex, room) => {
+                            if (ex) {
+                                reject(ex);
+                            }
+                            resolve(room);
+                        });
+                    } else {
+                        resolve(room);
+                    }
                 });
             });
         });
@@ -81,7 +91,7 @@ module.exports = {
      * @param userId    用户id
      * @returns {Promise}
      */
-    "leaveRoom": (roomId, userId, callback) => {
+    "leaveRoom": (roomId, userId) => {
         var promise = new Promise((resolve, reject) => {
             RoomModel.findById(roomId, (ex, room) => {
                 if (ex) {

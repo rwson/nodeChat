@@ -47,8 +47,9 @@ module.exports = {
             Message.save((ex, message) => {
                 if (ex) {
                     reject(ex);
+                } else {
+                    resolve(message);
                 }
-                resolve(message);
             });
         });
         return promise;

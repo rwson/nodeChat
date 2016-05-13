@@ -11,7 +11,7 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import history from "../history";
 import * as Actions from "../actions";
-import NetWorkApi from "../NetWorkApi";
+import NetWorkApi from "../netWorkApi";
 
 class Nav extends Component {
 

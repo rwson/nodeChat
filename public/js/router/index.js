@@ -17,7 +17,7 @@ import {
     My,
     Nav,
     Room,
-    Rooms,
+    Rooms
 } from "../components";
 
 /**
