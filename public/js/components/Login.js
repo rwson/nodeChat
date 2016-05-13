@@ -10,7 +10,7 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import history from "../history";
 import * as Actions from "../actions";
-import * as netWorkApi from "../netWorkApi";
+import NetWorkApi from "../NetWorkApi";
 
 class Login extends Component {
 
@@ -32,8 +32,8 @@ class Login extends Component {
         }
 
         //  邮箱符合规范
-        netWorkApi.httpPostRequest({
-            "url": `${netWorkApi.Urls.login}/${email}`,
+        NetWorkApi.httpPostRequest({
+            "url": `${NetWorkApi.getRequestUrls().login}/${email}`,
             "context": this,
             "success": function (user) {
                 userLogin(user.user);

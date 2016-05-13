@@ -9,34 +9,29 @@ import { Route,Link } from "react-router";
 import classname from "classname";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
+import io from "socket.io-client";
 import * as Actions from "../actions";
 import { SOCKET_ADDRESS } from "../constants";
 
-const socket = require("socket.io-client")(SOCKET_ADDRESS.rooms);
+const socket = io.connect(SOCKET_ADDRESS.rooms);
 
 class Rooms extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            "rooms": []
-        };
     }
 
-    /**
-     * 组件即将被实例化完成
-     */
-    componentWillMount() {
-        const {} = this.props;
-    }
-
-    /**
-     * 获取所有房间
-     */
-    getRooms() {
+    componentDidMount() {
+        const { getRooms } = this.props;
+        socket.on("room connection", (rooms) => {
+            getRooms(rooms);
+        });
     }
 
     render() {
+
+        console.log(this.props);
+
         const { rooms } = this.props;
 
         return (
@@ -67,12 +62,11 @@ class Rooms extends Component {
             </div>
         );
     }
-
 }
 
 function mapStateToProps(state) {
     return {
-        "rooms":state.reducers.rooms
+        "rooms": state.reducers.rooms
     };
 }
 
@@ -80,4 +74,4 @@ function mapDispatchToProps(dispatch) {
     return bindActionCreators(Actions, dispatch);
 }
 
-export default connect(mapStateToProps,mapDispatchToProps)(Rooms);
+export default connect(mapStateToProps, mapDispatchToProps)(Rooms);

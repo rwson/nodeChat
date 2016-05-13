@@ -11,7 +11,9 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import history from "../history";
 import * as Actions from "../actions";
-import * as netWorkApi from "../netWorkApi";
+import NetWorkApi from "../NetWorkApi";
+
+console.log(NetWorkApi.httpGetRequest);
 
 class Nav extends Component {
 
@@ -23,19 +25,18 @@ class Nav extends Component {
      * 组件即将被实例化完成
      */
     componentWillMount() {
-        const { checkLogin, userLogin } = this.props;
+        const { checkLogin } = this.props;
 
         //  检测用户是否登录
-        netWorkApi.httpGetRequest({
-            "url": netWorkApi.Urls.checkLogin,
+        NetWorkApi.httpGetRequest({
+            "url": NetWorkApi.getRequestUrls().checkLogin,
             "context": this,
             "success": function (data) {
-                checkLogin(true);
-                userLogin(data.user);
+                checkLogin(true, data.user);
                 history.replaceState(null, "/");
             },
             "error": function (ex) {
-                checkLogin(false);
+                checkLogin(false, {});
             }
         });
     }
@@ -47,13 +48,13 @@ class Nav extends Component {
         const { userLogout, userOffline } = this.props;
 
         //  检测用户是否登录
-        netWorkApi.httpPostRequest({
-            "url": netWorkApi.Urls.logout,
+        NetWorkApi.httpPostRequest({
+            "url": NetWorkApi.getRequestUrls().logout,
             "context": this,
             "success": function (data) {
                 //  退出登录后,前端也下线
                 userLogout();
-                checkLogin(false);
+                checkLogin(false, {});
                 userOffline();
             },
             "error": function (ex) {

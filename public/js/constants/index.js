@@ -39,6 +39,9 @@ export default ({
     "LEAVE_ROOM": "LEAVE_ROOM",
 
     //  发送信息
-    "POST_MESSAGE": "POST_MESSAGE"
+    "POST_MESSAGE": "POST_MESSAGE",
+
+    //  获取房间列表
+    "GET_ROOMS": "GET_ROOMS"
 
 });

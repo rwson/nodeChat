@@ -4,7 +4,7 @@
 
 "use strict";
 
-import { CHECK_LOGIN, LOGIN, LOGOUT, USER_OFFLINE, JOIN_ROOM, LEAVE_ROOM, POST_MESSAGE } from "../constants";
+import { CHECK_LOGIN, LOGIN, LOGOUT, USER_OFFLINE, GET_ROOMS } from "../constants";
 import objectAssign from "object-assign";
 
 //  默认state
@@ -22,7 +22,8 @@ export default function reducer(state = initialState, action = {}) {
         //  检测用户登录
         case CHECK_LOGIN:
             return objectAssign({}, state, {
-                "online": action
+                "online": action.online,
+                "userInfo": action.userInfo
             });
             break;
 
@@ -47,22 +48,13 @@ export default function reducer(state = initialState, action = {}) {
             break;
 
         //  加入房间
-        case JOIN_ROOM:
+        case GET_ROOMS:
             return objectAssign({}, state, {
-                "roomId": action.roomId
+                "rooms": action.rooms
             });
             break;
 
-        //  离开房间
-        case LEAVE_ROOM:
-            return objectAssign({}, state, {
-                "roomId": ""
-            });
-            break;
-
-        //  发送消息
-        case POST_MESSAGE:
-            break;
+        //  默认不匹配
         default :
             return state;
             break;

@@ -93,8 +93,8 @@ module.exports = (app) => {
 function _errorHandler(res, ex, next) {
     if (ex) {
         res.status(500)
-            .send(500, Object.assign({}, ex, {
+            .send({
                 "status": "error"
-            }));
+            });
     }
 }

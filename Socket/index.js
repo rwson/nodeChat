@@ -16,12 +16,24 @@ module.exports = (io, socket) => {
     //  主页的socket
     io.of(Config.socket.main)
         .on("connection", (socket) => {
-
         });
 
     //  房间列表的socket
     io.of(Config.socket.rooms)
         .on("connection", (socket) => {
+
+            RoomController.getRooms()
+                .then((rooms) => {
+                socket.emit("room connection", {
+                    "rooms": rooms.concat(["test","name"])
+                });
+            }).catch((ex) => _socketException(socket, ex));
+
+
+            socket.emit("rooms", {
+                "list": []
+            });
+
             /**
              *  创建新房间
              */
@@ -38,9 +50,6 @@ module.exports = (io, socket) => {
              * 新用户加入
              */
             socket.on("use join", (data) => {
-
-                console.log(data);
-
                 let userId = data.userId;
                 let roomId = data.roomId;
                 RoomController.joinRoom(userId, roomId)
@@ -87,7 +96,6 @@ module.exports = (io, socket) => {
                     })
                     .catch((ex) => _socketException(socket, ex));
             });
-
         });
 
     //  用户的socket请求

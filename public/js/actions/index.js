@@ -4,17 +4,19 @@
 
 "use strict";
 
-import { CHECK_LOGIN,LOGIN, LOGOUT, USER_OFFLINE } from "../constants";
+import { CHECK_LOGIN,LOGIN, LOGOUT, USER_OFFLINE, GET_ROOMS } from "../constants";
 
 /**
  * 检测用户是否登录
  * @param online    是否在线
- * @returns {{type: *, online: *}}
+ * @param userInfo  用户信息
+ * @returns {{type: *, online: *, userInfo: *}}
  */
-export function checkLogin(online) {
+export function checkLogin(online, userInfo) {
     return {
         "type": CHECK_LOGIN,
-        "online": online
+        "online": online,
+        "userInfo": userInfo
     };
 }
 
@@ -47,5 +49,17 @@ export function userLogout() {
 export function userOffline() {
     return {
         "type": USER_OFFLINE
+    };
+}
+
+/**
+ * 获取所有房间数据
+ * @param rooms     房间列表
+ * @returns {{type: *, rooms: *}}
+ */
+export function getRooms(rooms) {
+    return {
+        "type": GET_ROOMS,
+        "rooms": rooms
     };
 }
