@@ -16,7 +16,7 @@ module.exports = {
      * @param roomId
      * @returns {Promise}
      */
-    "findRoomById": function (roomId) {
+    "findRoomById": (roomId) => {
         var promise = new Promise((resolve, reject) => {
             RoomModel.findById(roomId, (ex, room) => {
                 if (ex) {
@@ -34,7 +34,7 @@ module.exports = {
      * @param pageSize  每页查询多少条
      * @returns {Promise}
      */
-    "getRooms": function (page = 1, pageSize = 10) {
+    "getRooms": (page = 1, pageSize = 10) => {
         var promise = new Promise((resolve, reject) => {
             RoomModel.find().paginate(page, pageSize, (ex, rooms, total) => {
                 if (ex) {
@@ -52,7 +52,7 @@ module.exports = {
      * @param userId    用户id
      * @returns {Promise}
      */
-    "joinRoom": function (roomId, userId) {
+    "joinRoom": (roomId, userId) => {
         var promise = new Promise((resolve, reject) => {
             RoomModel.findById(roomId, (ex, room) => {
                 if (ex) {
@@ -81,7 +81,7 @@ module.exports = {
      * @param userId    用户id
      * @returns {Promise}
      */
-    "leaveRoom": function (roomId, userId, callback) {
+    "leaveRoom": (roomId, userId, callback) => {
         var promise = new Promise((resolve, reject) => {
             RoomModel.findById(roomId, (ex, room) => {
                 if (ex) {
@@ -104,7 +104,7 @@ module.exports = {
      * @param room      房间相关信息
      * @returns {Promise}
      */
-    "addRoom": function (room) {
+    "createRoom": (room) => {
         let Room = new RoomModel(room);
         var promise = new Promise((resolve, reject) => {
             Room.save((ex, room) => {
@@ -112,6 +112,23 @@ module.exports = {
                     reject(ex);
                 }
                 resolve(room);
+            });
+        });
+        return promise;
+    },
+
+    /**
+     * 根据房间id删除一个房间
+     * @param id    房间id
+     * @returns {Promise}
+     */
+    "deleteRoom": (id) => {
+        var promise = new Promise((resolve, reject) => {
+            RoomModel.findByIdAndRemove(id, (ex) => {
+                if (ex) {
+                    reject(ex);
+                }
+                resolve();
             });
         });
         return promise;

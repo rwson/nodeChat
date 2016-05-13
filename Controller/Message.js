@@ -14,7 +14,7 @@ module.exports = {
      * @param roomId    房间id
      * @returns {Promise}
      */
-    "getMessagesByRoomId": function (roomId) {
+    "getMessagesByRoomId": (roomId) => {
         var promise = new Promise((resolve, reject) => {
             MessageModel.find({
                 "_roomId": roomId
@@ -38,7 +38,7 @@ module.exports = {
      * @param message   用户发送的信息
      * @returns {Promise}
      */
-    "postNew": function (message) {
+    "postNew": (message) => {
         var promise = new Promise((resolve, reject) => {
             var Message = new MessageModel();
             Message.content = message.content;

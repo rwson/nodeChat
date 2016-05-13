@@ -11,38 +11,82 @@ const UserController = Controller.User;
 const RoomController = Controller.Room;
 const MessageController = Controller.Message;
 
-module.exports = (io, socket) => {
+module.exports = (io) => {
 
-    //  主页的socket
+    /--------------------------主页的socket----------------------------/
     io.of(Config.socket.main)
         .on("connection", (socket) => {
         });
 
-    //  房间列表的socket
+    /--------------------------房间列表的socket----------------------------/
     io.of(Config.socket.rooms)
         .on("connection", (socket) => {
 
+            //  获取所有房间
             RoomController.getRooms()
                 .then((rooms) => {
-                socket.emit("room connection", {
-                    "rooms": rooms.concat(["test","name"])
-                });
-            }).catch((ex) => _socketException(socket, ex));
-
-
-            socket.emit("rooms", {
-                "list": []
-            });
+                    socket.emit("all room", {
+                        "rooms": rooms
+                    });
+                })
+                .catch((ex) => _socketException(socket, ex));
 
             /**
              *  创建新房间
              */
             socket.on("create room", (data) => {
-                console.log(data);
+                console.log("创建房间了!");
+                //  房间信息保存到数据库
+                RoomController.createRoom({
+                    "creatorId": data.creatorId,
+                    "name": data.name
+                }).then((room) => {
+                    //  从room表取得所有房间
+                    RoomController.getRooms()
+                        .then((rooms) => {
+                            socket.emit("all room", {
+                                "rooms": rooms
+                            });
+                        })
+                        .catch((ex) => _socketException(socket, ex));
+                })
+                    .catch((ex) => _socketException(socket, ex));
+            });
+
+            /**
+             * 取得所有房间
+             */
+            socket.on("get all room", () => {
+                //  从room表取得所有房间
+                RoomController.getRooms()
+                    .then((rooms) => {
+                        socket.emit("all room", {
+                            "rooms": rooms
+                        });
+                    })
+                    .catch((ex) => _socketException(socket, ex));
+            });
+
+            /**
+             * 删除一个房间
+             */
+            socket.on("delete room", (data) => {
+                RoomController.deleteRoom(data.id)
+                    .then(() => {
+                        //  从room表取得所有房间
+                        RoomController.getRooms()
+                            .then((rooms) => {
+                                socket.emit("all room", {
+                                    "rooms": rooms
+                                });
+                            })
+                            .catch((ex) => _socketException(socket, ex));
+                    })
+                    .catch((ex) => _socketException(socket, ex));
             });
         });
 
-    //  单个房间的socket
+    /--------------------------单个房间的socket----------------------------/
     io.of(Config.socket.room)
         .on("connection", (socket) => {
 
@@ -57,7 +101,8 @@ module.exports = (io, socket) => {
                         socket.emit("join success", {
                             "message": "加入房间成功"
                         });
-                    }).catch((ex) => _socketException(socket, ex));
+                    })
+                    .catch((ex) => _socketException(socket, ex));
             });
 
             /**
@@ -98,7 +143,7 @@ module.exports = (io, socket) => {
             });
         });
 
-    //  用户的socket请求
+    /--------------------------特定用户的socket请求----------------------------/
     io.of(Config.socket.my)
         .on("connection", (socket) => {
 

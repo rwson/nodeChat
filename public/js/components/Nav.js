@@ -13,8 +13,6 @@ import history from "../history";
 import * as Actions from "../actions";
 import NetWorkApi from "../NetWorkApi";
 
-console.log(NetWorkApi.httpGetRequest);
-
 class Nav extends Component {
 
     constructor(props) {
@@ -25,7 +23,7 @@ class Nav extends Component {
      * 组件即将被实例化完成
      */
     componentWillMount() {
-        const { checkLogin } = this.props;
+        const { checkLogin, curState } = this.props;
 
         //  检测用户是否登录
         NetWorkApi.httpGetRequest({
@@ -33,7 +31,11 @@ class Nav extends Component {
             "context": this,
             "success": function (data) {
                 checkLogin(true, data.user);
-                history.replaceState(null, "/");
+
+                //  登录页面做跳转
+                if (curState == "login") {
+                    history.replaceState(null, "/");
+                }
             },
             "error": function (ex) {
                 checkLogin(false, {});
@@ -90,7 +92,7 @@ class Nav extends Component {
                                 <Link to="/login">登录</Link>
                             </li>
                             <li className={classname({
-                                "active": (curState == "rooms" || curState == "room"),
+                                "active": curState == "rooms",
                                 "hide-nav-item": !online
                             })}>
                                 <Link to="/rooms">房间列表</Link>

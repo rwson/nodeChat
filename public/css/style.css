@@ -15,3 +15,16 @@ span.input-group-addon {
 .navbar-nav>li>a.user-head-link {
     padding: 5px;
 }
+
+.room-item {
+    overflow: hidden;
+    line-height: 34px;
+}
+
+.delete-btn {
+    margin-right: 10px;
+}
+
+.user-nums {
+    margin-top: 10px;
+}

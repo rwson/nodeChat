@@ -11,6 +11,8 @@ import objectAssign from "object-assign";
 const initialState = {
     "online": false,
     "rooms": [],
+    "totalPages": 1,
+    "currentPage": 1,
     "curState": "",
     "messages": [],
     "userInfo": {}

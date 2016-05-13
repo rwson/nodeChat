@@ -13,9 +13,11 @@ export default class Util {
      * @param override  如果第二个对象和第一个对象相同属性对应的值相同,指定为true,第一个的将被复写,否则被忽略
      * @returns {*}
      */
-    static merge(obj, obj2, override){
+    static merge(obj, obj2, override) {
         let res = obj;
+        //  遍历第二个对象
         for (var i in obj2) {
+            //  支持重写,且原对象存在该属性值
             if (override && !!res[i]) {
                 res[i] = obj2[i];
             } else {
@@ -30,7 +32,7 @@ export default class Util {
      * @returns {string}
      */
     static random() {
-        return ("" + (+new Date()) + Math.random() * 9999).toString(36).replace(/\./g, "");
+        return ("" + (+new Date()) + Math.random() * 9999).toString(16).replace(/\./g, "");
     }
 
     /**
@@ -52,6 +54,57 @@ export default class Util {
         return Object.prototype.toString.call(obj).toLowerCase().replace(/\[|\]/g, "").split(" ")[1];
     }
 
+    /**
+     * 格式化时间
+     * @param date      时间对象
+     * @param format    要输出的时间格式
+     * @returns {string}
+     */
+    static convertTime(date, format) {
+        //  最终的日期对象
+        let finalDate = date instanceof  Date ? date : new Date();
+
+        //  日期相关信息
+        let dateInfo = {
+            "year": finalDate.getFullYear(),
+            "month": _toDouble(finalDate.getMonth() + 1),
+            "date": _toDouble(finalDate.getDate()),
+            "hour": _toDouble(finalDate.getHours()),
+            "minutes": _toDouble(finalDate.getMinutes()),
+            "seconds": _toDouble(finalDate.getSeconds())
+        };
+
+        //  最后要输出时间格式
+        let finalFormart = format || "yyyy-mm-dd HH:MM:ss";
+
+        //  组织个数组方便转换
+        let formatArr = (/\s/).test(finalFormart) ? finalFormart.split(" ") : [finalFormart];
+
+        //  最后要输出结果的数组
+        let res = [];
+
+        //  遍历最后出来的数组进行替换
+        formatArr.forEach((item, index)=> {
+            if (index == 0) {
+                res.push(item.replace(/y{4}/ig, dateInfo.year).replace(/m{2}/gi, dateInfo.month).replace(/d{2}/ig, dateInfo.date));
+            } else if (index == 1) {
+                res.push(item.replace(/h{2}/ig, dateInfo.hour).replace(/m{2}/gi, dateInfo.minutes).replace(/s{2}/ig, dateInfo.seconds));
+            }
+        });
+
+        return res.join(" ");
+    }
+
 }
 
+
+/**
+ * 一位数字自动转成两位
+ * @param num   被转换的数字
+ * @returns {*}
+ * @private
+ */
+function _toDouble(num) {
+    return num <= 9 ? "0" + num : num;
+}
 

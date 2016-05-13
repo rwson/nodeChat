@@ -13,7 +13,7 @@ const UserModel = Model.User;
 var avaList = [];
 
 //	读取头像目录
-_readFile(Config.avatarPath).then(function (files) {
+_readFile(Config.avatarPath).then((files) => {
     if (files && files.length) {
         files.forEach((item) => {
             avaList.push(`${Config.avatarPath.replace("public", "")}/${item}`);
@@ -28,7 +28,7 @@ module.exports = {
      * @param _userId       用户id
      * @returns {Promise}
      */
-    "findUserById": function (_userId) {
+    "findUserById": (_userId) => {
         var promise = new Promise((resolve, reject) => {
             try {
                 UserModel.findById(_userId, (ex, user) => {
@@ -50,7 +50,7 @@ module.exports = {
      * @param email     邮箱
      * @returns {Promise}
      */
-    "findByEmailOrCreate": function (email) {
+    "findByEmailOrCreate": (email) => {
         var promise = new Promise((resolve, reject) => {
             UserModel.find({"email": email}, (ex, user) => {
                 if (ex) {
@@ -83,7 +83,7 @@ module.exports = {
      * @param targetId  目标用户id
      * @returns {Promise}
      */
-    "requestFriend": function (userId, targetId) {
+    "requestFriend": (userId, targetId) => {
         var promise = new Promise((resolve, reject) => {
             this.findUserById(targetId)
                 .then((user) => {
@@ -113,7 +113,7 @@ module.exports = {
      * @param friendId      好友id
      * @returns {Promise}
      */
-    "addFriend": function (userId, friendId) {
+    "addFriend": (userId, friendId) => {
         var promise = new Promise((resolve, reject) => {
             //  先查询用户
             this.findUserById((userId))
@@ -156,7 +156,7 @@ module.exports = {
      * @param friendId      好友id
      * @returns {Promise}
      */
-    "deleteFriend": function (userId, friendId) {
+    "deleteFriend": (userId, friendId) => {
         var promise = new Promise((resolve, reject) => {
             this.findUserById(userId)
                 .then((user) => {
@@ -184,7 +184,7 @@ module.exports = {
      * @param roomId    房间id
      * @returns {Promise}
      */
-    "joinRoom": function (userId, roomId) {
+    "joinRoom": (userId, roomId) => {
         var promise = new Promise((resolve, reject) => {
             UserModel.findOneAndUpdate(userId, {
                 "$set": {
@@ -206,7 +206,7 @@ module.exports = {
      * @param userId    用户id
      * @returns {Promise}
      */
-    "leaveRoom": function (userId) {
+    "leaveRoom": (userId) => {
         var promise = new Promise((resolve, reject) => {
             var promise = new Promise((resolve, reject) => {
                 UserModel.findByIdAndUpdate(userId, {
@@ -230,7 +230,7 @@ module.exports = {
      * @param _userId   用户id
      * @returns {Promise}
      */
-    "online": function (_userId) {
+    "online": (_userId) => {
         var promise = new Promise((resolve, reject) => {
             console.log();
             UserModel.findByIdAndUpdate(_userId, {
@@ -253,7 +253,7 @@ module.exports = {
      * @param _userId   用户id
      * @returns {Promise}
      */
-    "offline": function (_userId) {
+    "offline": (_userId) => {
         var promise = new Promise((resolve, reject) => {
             UserModel.findOneAndUpdate(_userId, {
                 "$set": {
@@ -274,7 +274,7 @@ module.exports = {
      * 获取在线用户
      * @returns {Promise}
      */
-    "getOnlineUsers": function () {
+    "getOnlineUsers": () => {
         var promise = new Promise((resolve, reject) => {
             UserModel.find({
                 "online": true
