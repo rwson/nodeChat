@@ -93,14 +93,19 @@ module.exports = (io) => {
             /**
              * 新用户加入
              */
-            socket.on("use join", (data) => {
-                let userId = data.userId;
+            socket.on("join room", (data) => {
+                let userId = data.userInfo._id;
                 let roomId = data.roomId;
-                RoomController.joinRoom(userId, roomId)
-                    .then((users) => {
-                        socket.emit("join success", {
-                            "message": "加入房间成功"
-                        });
+                RoomController.joinRoom(roomId, userId)
+                    .then((room) => {
+                        UserController.joinRoom(userId, roomId)
+                            .then(() => {
+                                socket.emit("join success", {
+                                    "message": "加入房间成功",
+                                    "roomName": room.name
+                                });
+                            })
+                            .catch((ex) => _socketException(socket, ex));
                     })
                     .catch((ex) => _socketException(socket, ex));
             });
@@ -108,8 +113,9 @@ module.exports = (io) => {
             /**
              * 获取在线用户
              */
-            socket.on("get online users", () => {
-                UserController.getOnlineUsers()
+            socket.on("get online users", (data) => {
+                let roomId = data.roomId;
+                UserController.getOnlineUsers(roomId)
                     .then((users) => {
                         socket.emit("users", {
                             "users": users
@@ -119,24 +125,29 @@ module.exports = (io) => {
             });
 
             /**
-             * 接收到消息
+             * 获取所有信息
              */
-            socket.on("post message", (message) => {
-                MessageController.postNew(message)
-                    .then((message) => {
-                        socket.emit("post success");
+            socket.on("get messages", (data) => {
+                console.log(`好!开始获取${data.roomId}房间里的消息`);
+                MessageController.getMessagesByRoomId(data.roomId)
+                    .then((messages) => {
+                        //console.log(messages);
+                        socket.emit("messages", {
+                            "messages": messages
+                        })
                     })
                     .catch((ex) => _socketException(socket, ex));
             });
 
             /**
-             * 获取所有房间
+             * 接收到消息
              */
-            socket.on("get all rooms", () => {
-                RoomController.getRooms()
-                    .then((rooms) => {
-                        socket.emit("room list", {
-                            "rooms": rooms
+            socket.on("post message", (data) => {
+                MessageController.postNew(data)
+                    .then(() => {
+                        console.log("消息发送入库成功!");
+                        socket.broadcast.emit("get messages", {
+                            "roomId": data.roomId
                         });
                     })
                     .catch((ex) => _socketException(socket, ex));

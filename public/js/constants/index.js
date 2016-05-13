@@ -41,7 +41,16 @@ export default ({
     //  发送信息
     "POST_MESSAGE": "POST_MESSAGE",
 
+    //  获取房间内的消息
+    "GET_MESSAGE": "GET_MESSAGE",
+
+    //  获取房间内用户
+    "GET_USERS": "GET_USERS",
+
     //  获取房间列表
-    "GET_ROOMS": "GET_ROOMS"
+    "GET_ROOMS": "GET_ROOMS",
+
+    //  更新房间名
+    "UPDATE_ROOM_NAME": "UPDATE_ROOM_NAME"
 
 });

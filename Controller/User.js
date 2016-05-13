@@ -271,12 +271,14 @@ module.exports = {
     },
 
     /**
-     * 获取在线用户
+     * 获取特定房间内的在线用户
+     * @param roomId    房间id
      * @returns {Promise}
      */
-    "getOnlineUsers": () => {
+    "getOnlineUsers": (roomId) => {
         var promise = new Promise((resolve, reject) => {
             UserModel.find({
+                "_roomId": roomId,
                 "online": true
             }, (ex, users) => {
                 if (ex) {

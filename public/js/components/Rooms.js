@@ -111,6 +111,9 @@ class Rooms extends Component {
 
         //  获取房间列表
         socket.emit("get all room");
+
+        //  绑定异常处理
+        Util.socketException(socket);
     }
 
     /**

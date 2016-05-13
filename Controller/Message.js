@@ -10,7 +10,7 @@ const MessageModel = Model.Message;
 module.exports = {
 
     /**
-     * 根据roomId获取信息(20条)
+     * 根据roomId获取信息(50条)
      * @param roomId    房间id
      * @returns {Promise}
      */
@@ -22,7 +22,7 @@ module.exports = {
                 "sort": {
                     "createAt": -1
                 },
-                "limit": 20
+                "limit": 50
             }, (ex, messages) => {
                 if (ex) {
                     reject(ex);
@@ -43,6 +43,7 @@ module.exports = {
             var Message = new MessageModel();
             Message.content = message.content;
             Message.creator = message.creator;
+            Message._roomId = message.roomId;
             Message.save((ex, message) => {
                 if (ex) {
                     reject(ex);
