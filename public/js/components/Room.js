@@ -91,26 +91,39 @@ class _MessageList extends Component {
     renderList(list, uId) {
         if (list && list.length) {
             return list.map((item) => {
-                return (
-                    <div key={Util.random()} className={classname({
+                if(item.messageType == "user") {
+                    return (
+                        <div key={Util.random()} className={classname({
                         "my-post": item.creator._id == uId
                     })}>
-                        <div className="media message-item">
-                            <div className="media-left">
-                                <img className="media-object poster-head-pic" src={item.creator.avatarUrl}/>
-                            </div>
-                            <div className="media-body">
+                            <div className="media message-item">
+                                <div className="media-left">
+                                    <img className="media-object poster-head-pic" src={item.creator.avatarUrl}/>
+                                </div>
+                                <div className="media-body">
                                 <span className="media-heading poster-info">
                                     {`${item.creator.name} - ${Util.convertTime(new Date(item.createAt), "yyyy-mm-dd HH:MM:SS")}`}
                                 </span>
-
-                                <p className="message-content">
-                                    {item.content}
-                                </p>
+                                    <p className="message-content">
+                                        {item.content}
+                                    </p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                );
+                    );
+                } else {
+                    return (
+                        <div key={Util.random()} className="system-message">
+                            <div className="media message-item">
+                                <div className="media-body">
+                                    <p className="message-content">
+                                        系统消息:{item.content}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    );
+                }
             });
         }
     }

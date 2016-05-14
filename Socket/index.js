@@ -94,15 +94,51 @@ module.exports = (io) => {
              */
             socket.on("join room", (data) => {
                 let userId = data.userInfo._id;
+                let userName = data.userInfo.name;
                 let roomId = data.roomId;
+                //  房间表新增用户
                 RoomController.joinRoom(roomId, userId)
                     .then((room) => {
+                        //  用户表修改所在房间id
                         UserController.joinRoom(userId, roomId)
                             .then(() => {
                                 socket.emit("join success", {
                                     "message": "加入房间成功",
                                     "roomName": room.name
                                 });
+                                //  发送系统消息
+                                RoomController.postNew({
+                                    "content": `用户${userName}加入了房间`,
+                                    "messageType": "system",
+                                    "creator": {},
+                                    "roomId": roomId
+                                })
+                                    .then(() => {
+                                        //  重新获取所有信息
+                                        MessageController.getMessagesByRoomId(data.roomId)
+                                            .then((messages) => {
+                                                socket.broadcast.emit("messages", {
+                                                    "messages": messages
+                                                });
+                                                socket.emit("messages", {
+                                                    "messages": messages
+                                                });
+                                            })
+                                            .catch((ex) => _socketException(socket, ex));
+                                    })
+                                    .catch((ex) => _socketException(socket, ex));
+                                //  获取房间内所有用户
+                                UserController.getOnlineUsers(roomId)
+                                    .then((users) => {
+                                        socket.broadcast.emit("users", {
+                                            "users": users
+                                        });
+                                        socket.emit("users", {
+                                            "users": users
+                                        });
+                                    })
+                                    .catch((ex) => _socketException(socket, ex));
+
                             })
                             .catch((ex) => _socketException(socket, ex));
                     })
@@ -114,6 +150,7 @@ module.exports = (io) => {
              */
             socket.on("get online users", (data) => {
                 let roomId = data.roomId;
+                //  从user表中获取当前房间中在线的用户
                 UserController.getOnlineUsers(roomId)
                     .then((users) => {
                         socket.emit("users", {
@@ -127,7 +164,7 @@ module.exports = (io) => {
              * 获取所有信息
              */
             socket.on("get messages", (data) => {
-                console.log(`好!开始获取${data.roomId}房间里的消息`);
+                //  获取所有消息,用户刚进入房间的时候需要
                 MessageController.getMessagesByRoomId(data.roomId)
                     .then((messages) => {
                         socket.emit("messages", {
@@ -141,9 +178,10 @@ module.exports = (io) => {
              * 接收到消息
              */
             socket.on("post message", (data) => {
-                console.log(socket.id);
+                //  将接收到的消息保存到message表
                 MessageController.postNew(data)
                     .then(() => {
+                        //  从messages表中获取数据,并且通知所有用户和自己
                         MessageController.getMessagesByRoomId(data.roomId)
                             .then((messages) => {
                                 socket.broadcast.emit("messages", {
@@ -162,18 +200,35 @@ module.exports = (io) => {
              * 用户离开房间事件
              */
             socket.on("leave room", (data) => {
-                UserController.leaveRoom(data.userId)
-                    .then(() => {
-                        RoomController.leaveRoom(data.roomId, data.userId)
+                let userId = data.userId;
+                let roomId = data.roomId;
+                UserController.leaveRoom(userId)
+                    .then((user) => {
+                        RoomController.leaveRoom(roomId, userId)
                             .then(() => {
-                                console.log(`id为${data.userId}的用户离开房间成功!`);
-                                socket.broadcast.emit("user ");
+                                //  离开消息保存到数据库
+                                RoomController.postNew({
+                                    "content": `用户${user.name}加入了房间`,
+                                    "messageType": "system",
+                                    "creator": {},
+                                    "roomId": roomId
+                                }).then(() => {
+                                    //  重新获取所有信息
+                                    MessageController.getMessagesByRoomId(data.roomId)
+                                        .then((messages) => {
+                                            //  这边用户已经离开房间,所有就不需要再通知自己了,只需要通知房间内用户
+                                            socket.broadcast.emit("messages", {
+                                                "messages": messages
+                                            });
+                                        })
+                                        .catch((ex) => _socketException(socket, ex));
+                                })
+                                    .catch((ex) => _socketException(socket, ex));
                             })
                             .catch((ex) => _socketException(socket, ex));
                     })
                     .catch((ex) => _socketException(socket, ex));
             });
-
         });
 
     /--------------------------特定用户的socket请求----------------------------/

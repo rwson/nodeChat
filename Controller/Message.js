@@ -44,6 +44,7 @@ module.exports = {
             Message.content = message.content;
             Message.creator = message.creator;
             Message.roomId = message.roomId;
+            Message.messageType = message.messageType || "user";
             Message.save((ex, message) => {
                 if (ex) {
                     reject(ex);
