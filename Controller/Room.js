@@ -94,22 +94,26 @@ module.exports = {
     "leaveRoom": (roomId, userId) => {
         let users = [];
         let promise = new Promise((resolve, reject) => {
-            RoomModel.findById(roomId, (ex, room) => {
-                if (ex) {
-                    reject(ex);
-                }
-                users = room.users.filter((user) => {
-                    return userId !== user._id;
-                });
-                room.users = users;
-                console.log(room);
-                room.save((ex, room) => {
+            try {
+                RoomModel.findById(roomId, (ex, room) => {
                     if (ex) {
                         reject(ex);
                     }
-                    resolve(room);
+                    //  过滤用户
+                    users = room.users.filter((user) => {
+                        return userId != user._id;
+                    });
+                    room.users = users;
+                    room.save((ex, room) => {
+                        if (ex) {
+                            reject(ex);
+                        }
+                        resolve(room);
+                    });
                 });
-            });
+            } catch (ex) {
+                console.log(ex);
+            }
         });
         return promise;
     },

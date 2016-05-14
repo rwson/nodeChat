@@ -89,6 +89,11 @@ span.input-group-addon {
     border: 1px solid #ddd;
 }
 
+.my-post {
+    text-align: right;
+    padding-right: 10px;
+}
+
 .media-body {
     width: auto;
 }
@@ -96,6 +101,12 @@ span.input-group-addon {
 .poster-info {
     display: block;
     font-size: 14px;
+    color: #ccc;
+    text-align: left;
+}
+
+.message-content {
+    text-align: left;
 }
 
 .poster-head-pic {

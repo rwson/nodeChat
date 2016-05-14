@@ -141,13 +141,17 @@ module.exports = (io) => {
              * 接收到消息
              */
             socket.on("post message", (data) => {
+                console.log(socket.id);
                 MessageController.postNew(data)
                     .then(() => {
                         MessageController.getMessagesByRoomId(data.roomId)
                             .then((messages) => {
+                                socket.broadcast.emit("messages", {
+                                    "messages": messages
+                                });
                                 socket.emit("messages", {
                                     "messages": messages
-                                })
+                                });
                             })
                             .catch((ex) => _socketException(socket, ex));
                     })
@@ -158,18 +162,18 @@ module.exports = (io) => {
              * 用户离开房间事件
              */
             socket.on("leave room", (data) => {
-                console.log(data);
                 UserController.leaveRoom(data.userId)
-                    .then((user) => {
-                        //console.log(user);
+                    .then(() => {
                         RoomController.leaveRoom(data.roomId, data.userId)
                             .then(() => {
                                 console.log(`id为${data.userId}的用户离开房间成功!`);
+                                socket.broadcast.emit("user ");
                             })
                             .catch((ex) => _socketException(socket, ex));
                     })
                     .catch((ex) => _socketException(socket, ex));
             });
+
         });
 
     /--------------------------特定用户的socket请求----------------------------/
@@ -188,7 +192,7 @@ module.exports = (io) => {
  */
 function _socketException(socket, ex) {
     console.log("exception");
-    socket.emit("error occurred", {
+    return socket.emit("error occurred", {
         "error": ex
     });
 }

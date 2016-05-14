@@ -59,7 +59,7 @@ class _RoomList extends Component {
                     );
                 } else {
                     return (
-                        <li className="list-group-item" key={Util.random()}>
+                        <li className="list-group-item room-item" key={Util.random()}>
                             <span className="badge user-nums">{item.users.length}</span>
                             <Link to={`/room/${item._id}`} className="btn btn-success pull-right delete-btn">进入</Link>
                             {item.name} - {Util.convertTime(new Date(item.createAt), "yyyy-mm-dd HH:MM:SS")}

@@ -100,7 +100,7 @@ export default class Util {
      * @param socketIns socket实例
      */
     static socketException(socketIns) {
-        socketIns.on("error occurred", (ex) => {
+        return socketIns.on("error occurred", (ex) => {
             console.group("socket异常");
             console.log(ex);
             console.groupEnd();

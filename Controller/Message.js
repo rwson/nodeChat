@@ -43,7 +43,7 @@ module.exports = {
             let Message = new MessageModel();
             Message.content = message.content;
             Message.creator = message.creator;
-            Message._roomId = message.roomId;
+            Message.roomId = message.roomId;
             Message.save((ex, message) => {
                 if (ex) {
                     reject(ex);

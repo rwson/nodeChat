@@ -34,9 +34,8 @@ module.exports = {
                 UserModel.findById(_userId, (ex, user) => {
                     if (ex) {
                         reject(ex);
-                    } else {
-                        resolve(user);
                     }
+                    resolve(user);
                 });
             } catch (e) {
                 console.log("出错了");
@@ -67,9 +66,8 @@ module.exports = {
                     user.save((ex, user) => {
                         if (ex) {
                             reject(ex);
-                        } else {
-                            resolve(user);
                         }
+                        resolve(user);
                     });
                 }
             });
@@ -95,9 +93,8 @@ module.exports = {
                     user.save((ex, user) => {
                         if (ex) {
                             reject(ex);
-                        } else {
-                            resolve(user);
                         }
+                        resolve(user);
                     });
                 })
                 .catch((ex) => {
@@ -134,9 +131,8 @@ module.exports = {
                                 user.save((ex, user) => {
                                     if (ex) {
                                         reject(ex);
-                                    } else {
-                                        resolve(user);
                                     }
+                                    resolve(user);
                                 });
                             })
                             .catch((ex) => {
@@ -166,9 +162,8 @@ module.exports = {
                     user.save((ex, user) => {
                         if (ex) {
                             reject(ex);
-                        } else {
-                            resolve(user);
                         }
+                        resolve(user);
                     });
                 })
                 .catch((ex) => {
@@ -193,9 +188,8 @@ module.exports = {
             }, (ex, user) => {
                 if (ex) {
                     reject(ex);
-                } else {
-                    resolve(user);
                 }
+                resolve(user);
             });
         });
         return promise;
@@ -206,24 +200,20 @@ module.exports = {
      * @param userId    用户id
      * @returns {Promise}
      */
-    "leaveRoom": (userId) => {
-        console.log(userId);
-        console.log("-------------------");
+    "leaveRoom": (userId, callback) => {
         let promise = new Promise((resolve, reject) => {
-            let promise = new Promise((resolve, reject) => {
-                UserModel.findByIdAndUpdate(userId, {
-                    "$set": {
-                        "roomId": ""
-                    }
-                }, (ex, user) => {
-                    if (ex) {
-                        console.log(ex);
-                        reject(ex);
-                    } else {
-                        console.log(user);
-                        resolve(user);
-                    }
-                });
+            UserModel.findByIdAndUpdate(userId, {
+                "$set": {
+                    "roomId": ""
+                }
+            }, (ex, user) => {
+                if (ex) {
+                    console.log(ex);
+                    reject(ex);
+                } else {
+                    console.log(user);
+                    resolve(user);
+                }
             });
         });
         return promise;
@@ -244,9 +234,8 @@ module.exports = {
             }, (ex, user) => {
                 if (ex) {
                     reject(ex);
-                } else {
-                    resolve(user);
                 }
+                resolve(user);
             });
         });
         return promise;
@@ -266,9 +255,8 @@ module.exports = {
             }, (ex, user) => {
                 if (ex) {
                     reject(ex);
-                } else {
-                    resolve(user);
                 }
+                resolve(user);
             });
         });
         return promise;
@@ -287,9 +275,8 @@ module.exports = {
             }, (ex, users) => {
                 if (ex) {
                     reject(ex);
-                } else {
-                    resolve(users);
                 }
+                resolve(users);
             });
         });
         return promise;
@@ -307,9 +294,8 @@ function _readFile(path) {
         fs.readdir(path, (ex, files) => {
             if (ex) {
                 reject(ex);
-            } else {
-                resolve(files);
             }
+            resolve(files);
         });
     });
     return prromise;

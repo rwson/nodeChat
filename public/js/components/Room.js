@@ -103,7 +103,10 @@ class _MessageList extends Component {
                                 <span className="media-heading poster-info">
                                     {`${item.creator.name} - ${Util.convertTime(new Date(item.createAt), "yyyy-mm-dd HH:MM:SS")}`}
                                 </span>
-                                {item.content}
+
+                                <p className="message-content">
+                                    {item.content}
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -192,7 +195,7 @@ class Room extends Component {
     }
 
     /**
-     * 组件被销毁,用户离开房间
+     * 组件被销毁,用户离开房间,并且告诉其他用户,断开socket连接
      */
     componentWillUnmount() {
         const { userInfo } = this.props;
@@ -201,6 +204,7 @@ class Room extends Component {
             "userId": userInfo._id,
             "roomId": id
         });
+        socket.disconnect();
     }
 
     /**
