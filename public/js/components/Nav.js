@@ -39,6 +39,7 @@ class Nav extends Component {
             },
             "error": function (ex) {
                 checkLogin(false, {});
+                history.replaceState(null, "/");
             }
         });
     }

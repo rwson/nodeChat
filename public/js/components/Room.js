@@ -41,20 +41,29 @@ class _UsersList extends Component {
      * @param list  用户数据
      * @returns {*}
      */
-    renderList(list) {
+    renderList(list, friends) {
         const _this = this;
         if (list && list.length) {
             return list.map((item) => {
-                return (
-                    <li className="list-group-item clearfix room-item user-item" key={Util.random()}>
-                        <button type="button" onClick={_this.handleAddFriend.bind(_this,item._id)}
-                                className="btn btn-success pull-right add-btn">
-                            <span className="glyphicon glyphicon-plus"></span>
-                        </button>
-                        <img src={item.avatarUrl} className="user-list-head"/>
-                        <span title={item.name} className="user-item-name">{item.name}</span>
-                    </li>
-                );
+                if (friends.indexOf(item._id) > -1) {
+                    return (
+                        <li className="list-group-item clearfix room-item user-item" key={Util.random()}>
+                            <img src={item.avatarUrl} className="user-list-head"/>
+                            <span title={item.name} className="user-item-name">{item.name}</span>
+                        </li>
+                    );
+                } else {
+                    return (
+                        <li className="list-group-item clearfix room-item user-item" key={Util.random()}>
+                            <button type="button" onClick={_this.handleAddFriend.bind(_this,item._id)}
+                                    className="btn btn-success pull-right add-btn">
+                                <span className="glyphicon glyphicon-plus"></span>
+                            </button>
+                            <img src={item.avatarUrl} className="user-list-head"/>
+                            <span title={item.name} className="user-item-name">{item.name}</span>
+                        </li>
+                    );
+                }
             });
         }
     }
@@ -64,10 +73,10 @@ class _UsersList extends Component {
      * @returns {XML}
      */
     render() {
-        const {listData} = this.props;
+        const {listData,friends} = this.props;
         return (
             <ul className="list-group">
-                {this.renderList(listData)}
+                {this.renderList(listData, friends)}
             </ul>
         );
     }
@@ -91,7 +100,7 @@ class _MessageList extends Component {
     renderList(list, uId) {
         if (list && list.length) {
             return list.map((item) => {
-                if(item.messageType == "user") {
+                if (item.messageType == "user") {
                     return (
                         <div key={Util.random()} className={classname({
                         "my-post": item.creator._id == uId
@@ -104,6 +113,7 @@ class _MessageList extends Component {
                                 <span className="media-heading poster-info">
                                     {`${item.creator.name} - ${Util.convertTime(new Date(item.createAt), "yyyy-mm-dd HH:MM:SS")}`}
                                 </span>
+
                                     <p className="message-content">
                                         {item.content}
                                     </p>
@@ -265,6 +275,9 @@ class Room extends Component {
      */
     render() {
         const { users, messages, roomName, userInfo } = this.props;
+        const friends = userInfo.friends.map((item) => {
+            return item._id;
+        });
         return (
             <div className="room-detail">
                 <h1>{roomName}</h1>
@@ -274,7 +287,7 @@ class Room extends Component {
                         <_MessageList listData={messages} uId={userInfo._id}/>
                     </div>
                     <div className="room-users">
-                        <_UsersList listData={users} addFriendCallback={this.handleAddFriend}/>
+                        <_UsersList listData={users} friends={friends} addFriendCallback={this.handleAddFriend}/>
                     </div>
                 </div>
                 <div className="post-edit-area">
