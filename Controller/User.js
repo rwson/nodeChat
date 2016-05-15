@@ -73,41 +73,53 @@ module.exports = {
     },
 
     /**
-     * 请求添加对方好友
+     * 请求添加对方为好友
      * @param userId    用户id
      * @param targetId  目标用户id
      * @returns {Promise}
      */
-    "requestFriend": (userId, targetId) => {
+    "requestAddFriend": (userId, targetId) => {
         let promise = new Promise((resolve, reject) => {
-            this.findUserById(targetId)
-                .then((user) => {
-                    if (!user.friendRequest) {
-                        user.friendRequest = [];
-                    }
-                    user.friendRequest.push(userId);
-                    //  更新对方数据并且保存
-                    user.save((ex, user) => {
-                        if (ex) {
-                            reject(ex);
-                        }
-                        resolve(user);
-                    });
-                })
-                .catch((ex) => {
+            UserModel.findById(targetId, (ex, user) => {
+                if (ex) {
                     reject(ex);
+                }
+                if (!user.friendRequest) {
+                    user.friendRequest = [];
+                }
+                if(user.friendRequest.indexOf(userId) == -1){
+                    user.friendRequest.push(userId);
+                }
+                //  更新对方数据并且保存
+                user.save((ex, user) => {
+                    if (ex) {
+                        reject(ex);
+                    }
+                    resolve(user);
                 });
+            });
         });
         return promise;
     },
 
     /**
-     * 添加好友
+     * 拒绝添加对方为好友
+     * @param userId     用户id
+     * @param requestId  请求添加好友的用户id
+     * @returns {Promise}
+     */
+    "rejectAddFriend": (userId, requestId) => {
+        let promise = new Promise();
+        return promise;
+    },
+
+    /**
+     * 同意添加好友
      * @param userId        用户id
      * @param friendId      好友id
      * @returns {Promise}
      */
-    "addFriend": (userId, friendId) => {
+    "agreeAddFriend": (userId, friendId) => {
         let promise = new Promise((resolve, reject) => {
             //  先查询用户
             this.findUserById((userId))
@@ -186,9 +198,6 @@ module.exports = {
                 if (ex) {
                     reject(ex);
                 }
-                UserModel.findById(userId, (ex, user) => {
-                    console.log(user);
-                });
                 resolve(user);
             });
         });
@@ -223,7 +232,6 @@ module.exports = {
      */
     "online": (_userId) => {
         let promise = new Promise((resolve, reject) => {
-            console.log();
             UserModel.findByIdAndUpdate(_userId, {
                 "$set": {
                     "online": true

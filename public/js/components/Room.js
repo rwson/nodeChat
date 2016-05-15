@@ -203,6 +203,21 @@ class Room extends Component {
             getMessages(data.messages);
         });
 
+        /**
+         * 好友请求
+         */
+        socket.on("new friend request", (data) => {
+            const { userInfo } = this.props;
+            if (userInfo._id == data.targetId) {
+                const isAgree = confirm(`用户${data.user.name}请求添将你你加为好友,你觉得可以吗?`);
+                if (isAgree) {
+                    alert(`你同意了${data.user.name}的好友请求`);
+                } else {
+                    alert(`你拒绝了${data.user.name}的好友请求`);
+                }
+            }
+        });
+
         //  绑定异常处理
         Util.socketException(socket);
     }
@@ -256,8 +271,13 @@ class Room extends Component {
      * @param id
      */
     handleAddFriend(id) {
-        alert(id);
-        socket.emit("");
+        const { userInfo } = this.props;
+        //  发送socket请求
+
+        socket.emit("request add friend", {
+            "userId": userInfo._id,
+            "targetId": id
+        });
     }
 
     /**
@@ -282,7 +302,7 @@ class Room extends Component {
                     </div>
                     <div className="room-users">
                         <_UsersList listData={users} friends={friends} uId={userInfo._id}
-                                    addFriendCallback={this.handleAddFriend}/>
+                                    addFriendCallback={this.handleAddFriend.bind(this)}/>
                     </div>
                 </div>
                 <div className="post-edit-area">

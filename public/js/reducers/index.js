@@ -48,7 +48,7 @@ export default function reducer(state = initialState, action = {}) {
 
         //  用户退出登录,所以state全部还原
         case USER_OFFLINE:
-            return initialState;
+            return objectAssign({}, initialState);
             break;
 
         //  获取房间内的消息

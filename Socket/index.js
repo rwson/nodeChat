@@ -194,36 +194,41 @@ module.exports = (io) => {
                 UserController.leaveRoom(userId)
                     .then((user) => {
                         RoomController.leaveRoom(roomId, userId)
-                            .then(() => {
-                                //  离开消息保存到数据库
-                                RoomController.postNew({
-                                    "content": `用户${user.name}离开了房间`,
-                                    "messageType": "system",
-                                    "creator": {},
-                                    "roomId": roomId
-                                }).then(() => {
-                                    //  重新获取所有信息
-                                    MessageController.getMessagesByRoomId(data.roomId)
-                                        .then((messages) => {
-                                            //  这边用户已经离开房间,所有就不需要再通知自己了,只需要通知房间内用户
-                                            socket.broadcast.emit("messages", {
-                                                "messages": messages
-                                            });
-                                        })
-                                        .catch((ex) => _socketException(socket, ex, "leave room's MessageController.getMessagesByRoomId"));
-                                })
-                                    .catch((ex) => _socketException(socket, ex, "leave room's RoomController.postNew"));
+                            .then((room) => {
+                                socket.broadcast.emit("users", {
+                                    "users": room.users
+                                });
                             })
                             .catch((ex) => _socketException(socket, ex, "leave room's RoomController.postNew"));
                     })
                     .catch((ex) => _socketException(socket, ex, "leave room's UserController.leaveRoom"));
+            });
+
+            /**
+             * 请求添加好友
+             */
+            socket.on("request add friend", (data) => {
+                const userId = data.userId;
+                const targetId = data.targetId;
+                //  先把请求写入数据库
+                UserController.requestAddFriend(userId, targetId)
+                    .then((user) => {
+
+                        console.log(user);
+
+                        //  像前台发送通知,前台根据传过去的targetId是否等于当前用户的id做判断
+                        socket.broadcast.emit("new friend request", {
+                            "user": user,
+                            "targetId": targetId
+                        });
+                    })
+                    .catch((ex) => _socketException(socket, ex, "request add friend's UserController.requestAddFriend"));
             });
         });
 
     /--------------------------特定用户的socket请求----------------------------/
     io.of(Config.socket.my)
         .on("connection", (socket) => {
-
 
         });
 

@@ -59,6 +59,7 @@ class Nav extends Component {
                 userLogout();
                 checkLogin(false, {});
                 userOffline();
+                history.replaceState(null, "/");
             },
             "error": function (ex) {
                 alert("退出登录失败!请重试!");

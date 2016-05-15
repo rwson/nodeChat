@@ -7,6 +7,7 @@
 const Util = require("../Util");
 const Model = require("../Model");
 const RoomModel = Model.Room;
+const UserModel = Model.User;
 const UserController = require("./User");
 
 module.exports = {
@@ -62,26 +63,32 @@ module.exports = {
                 if (Util.isEmpty(usersList)) {
                     usersList = [];
                 }
-                UserController.findUserById(userId).then((user) => {
-                    let flag = false;
-                    if(usersList.length){
-                        room.users.forEach((user) => {
-                            if (!flag && user._id == userId) {
-                                flag = true;
-                            }
-                        });
+                UserModel.findById(userId, (ex, user) => {
+                    if (ex) {
+                        reject(ex);
                     }
-                    //  用户不存在房间的用户列表
-                    if (!flag) {
-                        usersList.push(user);
-                        room.users = usersList;
-                        usersList = null;
-                        room.save((ex, room) => {
-                            if (ex) {
-                                reject(ex);
-                            }
+                    let flag = false;
+                    if (user) {
+                        if (usersList.length) {
+                            room.users.forEach((user) => {
+                                if (!flag && user._id == userId) {
+                                    flag = true;
+                                }
+                            });
+                        }
+                        //  用户不存在房间的用户列表
+                        if (!flag) {
+                            usersList.push(user);
+                            room.users = usersList;
+                            room.save((ex, room) => {
+                                if (ex) {
+                                    reject(ex);
+                                }
+                                resolve(room);
+                            });
+                        } else {
                             resolve(room);
-                        });
+                        }
                     } else {
                         resolve(room);
                     }
