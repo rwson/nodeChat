@@ -12,13 +12,15 @@ module.exports = {
     /**
      * 根据roomId获取信息(50条)
      * @param roomId    房间id
+     * @param type      消息类型
      * @returns {Promise}
      */
-    "getMessagesByRoomId": (roomId) => {
+    "getMessagesByRoomId": (roomId, type) => {
+        let condition = {
+            "roomId": roomId
+        };
         let promise = new Promise((resolve, reject) => {
-            MessageModel.find({
-                "roomId": roomId
-            }, null, {
+            MessageModel.find(condition, null, {
                 "sort": {
                     "createAt": -1
                 },
@@ -44,13 +46,11 @@ module.exports = {
             Message.content = message.content;
             Message.creator = message.creator;
             Message.roomId = message.roomId;
-            Message.messageType = message.messageType || "user";
             Message.save((ex, message) => {
                 if (ex) {
                     reject(ex);
-                } else {
-                    resolve(message);
                 }
+                resolve(message);
             });
         });
         return promise;

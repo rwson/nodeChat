@@ -30,16 +30,12 @@ module.exports = {
      */
     "findUserById": (_userId) => {
         let promise = new Promise((resolve, reject) => {
-            try {
-                UserModel.findById(_userId, (ex, user) => {
-                    if (ex) {
-                        reject(ex);
-                    }
-                    resolve(user);
-                });
-            } catch (e) {
-                console.log("出错了");
-            }
+            UserModel.findById(_userId, (ex, user) => {
+                if (ex) {
+                    reject(ex);
+                }
+                resolve(user);
+            });
         });
         return promise;
     },
@@ -61,7 +57,8 @@ module.exports = {
                     user = new UserModel({
                         "name": email.split("@")[0],
                         "email": email,
-                        "avatarUrl": avaList[Util.random(0, avaList.length - 1)]
+                        "avatarUrl": avaList[Util.random(0, avaList.length - 1)],
+                        "roomId": ""
                     });
                     user.save((ex, user) => {
                         if (ex) {
@@ -181,7 +178,7 @@ module.exports = {
      */
     "joinRoom": (userId, roomId) => {
         let promise = new Promise((resolve, reject) => {
-            UserModel.findOneAndUpdate(userId, {
+            UserModel.findByIdAndUpdate(userId, {
                 "$set": {
                     "roomId": roomId
                 }
@@ -189,6 +186,9 @@ module.exports = {
                 if (ex) {
                     reject(ex);
                 }
+                UserModel.findById(userId, (ex, user) => {
+                    console.log(user);
+                });
                 resolve(user);
             });
         });
@@ -208,12 +208,9 @@ module.exports = {
                 }
             }, (ex, user) => {
                 if (ex) {
-                    console.log(ex);
                     reject(ex);
-                } else {
-                    console.log(user);
-                    resolve(user);
                 }
+                resolve(user);
             });
         });
         return promise;
@@ -263,15 +260,14 @@ module.exports = {
     },
 
     /**
-     * 获取特定房间内的在线用户
+     * 获取特定房间内的用户
      * @param roomId    房间id
      * @returns {Promise}
      */
     "getOnlineUsers": (roomId) => {
         let promise = new Promise((resolve, reject) => {
             UserModel.find({
-                "roomId": roomId,
-                "online": true
+                "roomId": roomId
             }, (ex, users) => {
                 if (ex) {
                     reject(ex);

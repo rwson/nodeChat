@@ -96,6 +96,23 @@ export default class Util {
     }
 
     /**
+     * 判断对象是否为空
+     * @param obj   被判断的对象
+     * @returns {boolean}
+     */
+    static isEmpty(obj) {
+        var _res = false;
+        if (["null", "undefined"].indexOf(this.getProType(obj)) > -1) {
+            _res = true;
+        } else if (this.getProType(obj) == "object") {
+            _res = !Object.keys(obj).length;
+        } else {
+            _res = !obj.length;
+        }
+        return _res;
+    }
+
+    /**
      * socket异常
      * @param socketIns socket实例
      */

@@ -55,21 +55,27 @@ module.exports = {
     "joinRoom": (roomId, userId) => {
         let promise = new Promise((resolve, reject) => {
             RoomModel.findById(roomId, (ex, room) => {
+                let usersList = room.users;
                 if (ex) {
                     reject(ex);
                 }
-                if (!room.users) {
-                    room.users = [];
+                if (Util.isEmpty(usersList)) {
+                    usersList = [];
                 }
                 UserController.findUserById(userId).then((user) => {
                     let flag = false;
-                    room.users.forEach((user) => {
-                        if (!flag && user._id == userId) {
-                            flag = true;
-                        }
-                    });
-                    if (user && !flag) {
-                        room.users.push(user);
+                    if(usersList.length){
+                        room.users.forEach((user) => {
+                            if (!flag && user._id == userId) {
+                                flag = true;
+                            }
+                        });
+                    }
+                    //  用户不存在房间的用户列表
+                    if (!flag) {
+                        usersList.push(user);
+                        room.users = usersList;
+                        usersList = null;
                         room.save((ex, room) => {
                             if (ex) {
                                 reject(ex);

@@ -123,3 +123,16 @@ span.input-group-addon {
     left: 5%;
     top: 220px;
 }
+
+.system-message .message-item {
+    padding: 3px;
+    line-height: 14px;
+    background: #ccc;
+    color: #fff;
+    text-align: center;
+    margin: 0 auto;
+}
+
+.system-message .message-item p {
+    margin: 0;
+}

@@ -5,6 +5,7 @@
 "use strict";
 
 import React,{ Component } from "react";
+import EmojiPicker,{ emojiMap }  from "react-emoji-picker";
 import { Route,Link } from "react-router";
 import classname from "classname";
 import { bindActionCreators } from "redux";
@@ -38,14 +39,17 @@ class _UsersList extends Component {
 
     /**
      * 根据list渲染用户列表
-     * @param list  用户数据
+     * @param list      用户数据
+     * @param friends   好友数组
+     * @param uId       用户id
      * @returns {*}
      */
-    renderList(list, friends) {
+    renderList(list, friends, uId) {
         const _this = this;
         if (list && list.length) {
             return list.map((item) => {
-                if (friends.indexOf(item._id) > -1) {
+                //  自己和已经添加的朋友
+                if (friends.indexOf(item._id) > -1 || item._id == uId) {
                     return (
                         <li className="list-group-item clearfix room-item user-item" key={Util.random()}>
                             <img src={item.avatarUrl} className="user-list-head"/>
@@ -73,10 +77,10 @@ class _UsersList extends Component {
      * @returns {XML}
      */
     render() {
-        const {listData,friends} = this.props;
+        const { listData, friends, uId } = this.props;
         return (
             <ul className="list-group">
-                {this.renderList(listData, friends)}
+                {this.renderList(listData, friends, uId)}
             </ul>
         );
     }
@@ -100,40 +104,26 @@ class _MessageList extends Component {
     renderList(list, uId) {
         if (list && list.length) {
             return list.map((item) => {
-                if (item.messageType == "user") {
-                    return (
-                        <div key={Util.random()} className={classname({
+                return (
+                    <div key={Util.random()} className={classname({
                         "my-post": item.creator._id == uId
                     })}>
-                            <div className="media message-item">
-                                <div className="media-left">
-                                    <img className="media-object poster-head-pic" src={item.creator.avatarUrl}/>
-                                </div>
-                                <div className="media-body">
+                        <div className="media message-item">
+                            <div className="media-left">
+                                <img className="media-object poster-head-pic" src={item.creator.avatarUrl}/>
+                            </div>
+                            <div className="media-body">
                                 <span className="media-heading poster-info">
                                     {`${item.creator.name} - ${Util.convertTime(new Date(item.createAt), "yyyy-mm-dd HH:MM:SS")}`}
                                 </span>
 
-                                    <p className="message-content">
-                                        {item.content}
-                                    </p>
-                                </div>
+                                <p className="message-content">
+                                    {item.content}
+                                </p>
                             </div>
                         </div>
-                    );
-                } else {
-                    return (
-                        <div key={Util.random()} className="system-message">
-                            <div className="media message-item">
-                                <div className="media-body">
-                                    <p className="message-content">
-                                        系统消息:{item.content}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    );
-                }
+                    </div>
+                );
             });
         }
     }
@@ -266,7 +256,8 @@ class Room extends Component {
      * @param id
      */
     handleAddFriend(id) {
-
+        alert(id);
+        socket.emit("");
     }
 
     /**
@@ -275,9 +266,12 @@ class Room extends Component {
      */
     render() {
         const { users, messages, roomName, userInfo } = this.props;
-        const friends = userInfo.friends.map((item) => {
-            return item._id;
-        });
+        let friends = [];
+        if (!Util.isEmpty(userInfo)) {
+            friends = userInfo.friends.map((item) => {
+                return item._id;
+            });
+        }
         return (
             <div className="room-detail">
                 <h1>{roomName}</h1>
@@ -287,7 +281,8 @@ class Room extends Component {
                         <_MessageList listData={messages} uId={userInfo._id}/>
                     </div>
                     <div className="room-users">
-                        <_UsersList listData={users} friends={friends} addFriendCallback={this.handleAddFriend}/>
+                        <_UsersList listData={users} friends={friends} uId={userInfo._id}
+                                    addFriendCallback={this.handleAddFriend}/>
                     </div>
                 </div>
                 <div className="post-edit-area">

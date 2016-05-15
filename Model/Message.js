@@ -9,10 +9,6 @@ const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 const Message = new Schema({
     "content": String,          //  消息内容
-    "messageType": {            //  消息类型(系统[system]、用户[message])
-        "type": String,
-        "default": "user"
-    },
     "creator": {                //  创建人
         "_id": ObjectId,        //  创建人id
         "email": String,        //  邮箱

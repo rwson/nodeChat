@@ -29,10 +29,10 @@ module.exports = (io) => {
                         "rooms": rooms
                     });
                 })
-                .catch((ex) => _socketException(socket, ex));
+                .catch((ex) => _socketException(socket, ex, "all room's RoomController.getRooms"));
 
             /**
-             *  创建新房间
+             *  创建新房间(群聊,任何人都能进)
              */
             socket.on("create room", (data) => {
                 //  房间信息保存到数据库
@@ -47,9 +47,9 @@ module.exports = (io) => {
                                 "rooms": rooms
                             });
                         })
-                        .catch((ex) => _socketException(socket, ex));
+                        .catch((ex) => _socketException(socket, ex, "create room's RoomController.getRooms"));
                 })
-                    .catch((ex) => _socketException(socket, ex));
+                    .catch((ex) => _socketException(socket, ex, "create room's RoomController.createRoom"));
             });
 
             /**
@@ -63,7 +63,7 @@ module.exports = (io) => {
                             "rooms": rooms
                         });
                     })
-                    .catch((ex) => _socketException(socket, ex));
+                    .catch((ex) => _socketException(socket, ex, "get all room's RoomController.getRooms"));
             });
 
             /**
@@ -79,9 +79,9 @@ module.exports = (io) => {
                                     "rooms": rooms
                                 });
                             })
-                            .catch((ex) => _socketException(socket, ex));
+                            .catch((ex) => _socketException(socket, ex, "delete room's RoomController.getRooms"));
                     })
-                    .catch((ex) => _socketException(socket, ex));
+                    .catch((ex) => _socketException(socket, ex, "delete room's RoomController.deleteRoom"));
             });
         });
 
@@ -94,39 +94,24 @@ module.exports = (io) => {
              */
             socket.on("join room", (data) => {
                 let userId = data.userInfo._id;
-                let userName = data.userInfo.name;
                 let roomId = data.roomId;
                 //  房间表新增用户
                 RoomController.joinRoom(roomId, userId)
                     .then((room) => {
                         //  用户表修改所在房间id
                         UserController.joinRoom(userId, roomId)
-                            .then(() => {
-                                socket.emit("join success", {
-                                    "message": "加入房间成功",
-                                    "roomName": room.name
-                                });
-                                //  发送系统消息
-                                RoomController.postNew({
-                                    "content": `用户${userName}加入了房间`,
-                                    "messageType": "system",
-                                    "creator": {},
-                                    "roomId": roomId
-                                })
-                                    .then(() => {
-                                        //  重新获取所有信息
-                                        MessageController.getMessagesByRoomId(data.roomId)
-                                            .then((messages) => {
-                                                socket.broadcast.emit("messages", {
-                                                    "messages": messages
-                                                });
-                                                socket.emit("messages", {
-                                                    "messages": messages
-                                                });
-                                            })
-                                            .catch((ex) => _socketException(socket, ex));
+                            .then((user) => {
+                                //  重新获取所有信息(用户第一次进入房间,只获取之前的聊天记录,之前其他人的加入信息不管)
+                                MessageController.getMessagesByRoomId(data.roomId, "user")
+                                    .then((messages) => {
+                                        socket.broadcast.emit("messages", {
+                                            "messages": messages
+                                        });
+                                        socket.emit("messages", {
+                                            "messages": messages
+                                        });
                                     })
-                                    .catch((ex) => _socketException(socket, ex));
+                                    .catch((ex) => _socketException(socket, ex, "join room's MessageController.getMessagesByRoomId"));
                                 //  获取房间内所有用户
                                 UserController.getOnlineUsers(roomId)
                                     .then((users) => {
@@ -137,12 +122,16 @@ module.exports = (io) => {
                                             "users": users
                                         });
                                     })
-                                    .catch((ex) => _socketException(socket, ex));
-
+                                    .catch((ex) => _socketException(socket, ex, "UserController.getOnlineUsers"));
+                                //  发送系统消息
+                                socket.emit("join success", {
+                                    "message": "加入房间成功",
+                                    "roomName": room.name
+                                });
                             })
-                            .catch((ex) => _socketException(socket, ex));
+                            .catch((ex) => _socketException(socket, ex, "join room's UserController.joinRoom"));
                     })
-                    .catch((ex) => _socketException(socket, ex));
+                    .catch((ex) => _socketException(socket, ex, "join room's RoomController.joinRoom"));
             });
 
             /**
@@ -157,7 +146,7 @@ module.exports = (io) => {
                             "users": users
                         });
                     })
-                    .catch((ex) => _socketException(socket, ex));
+                    .catch((ex) => _socketException(socket, ex, "get online users' UserController.getOnlineUsers"));
             });
 
             /**
@@ -171,7 +160,7 @@ module.exports = (io) => {
                             "messages": messages
                         })
                     })
-                    .catch((ex) => _socketException(socket, ex));
+                    .catch((ex) => _socketException(socket, ex, "get messages' MessageController.getMessagesByRoomId"));
             });
 
             /**
@@ -191,9 +180,9 @@ module.exports = (io) => {
                                     "messages": messages
                                 });
                             })
-                            .catch((ex) => _socketException(socket, ex));
+                            .catch((ex) => _socketException(socket, ex, "post message's MessageController.postNew"));
                     })
-                    .catch((ex) => _socketException(socket, ex));
+                    .catch((ex) => _socketException(socket, ex, "post message's MessageController.getMessagesByRoomId"));
             });
 
             /**
@@ -208,7 +197,7 @@ module.exports = (io) => {
                             .then(() => {
                                 //  离开消息保存到数据库
                                 RoomController.postNew({
-                                    "content": `用户${user.name}加入了房间`,
+                                    "content": `用户${user.name}离开了房间`,
                                     "messageType": "system",
                                     "creator": {},
                                     "roomId": roomId
@@ -221,20 +210,19 @@ module.exports = (io) => {
                                                 "messages": messages
                                             });
                                         })
-                                        .catch((ex) => _socketException(socket, ex));
+                                        .catch((ex) => _socketException(socket, ex, "leave room's MessageController.getMessagesByRoomId"));
                                 })
-                                    .catch((ex) => _socketException(socket, ex));
+                                    .catch((ex) => _socketException(socket, ex, "leave room's RoomController.postNew"));
                             })
-                            .catch((ex) => _socketException(socket, ex));
+                            .catch((ex) => _socketException(socket, ex, "leave room's RoomController.postNew"));
                     })
-                    .catch((ex) => _socketException(socket, ex));
+                    .catch((ex) => _socketException(socket, ex, "leave room's UserController.leaveRoom"));
             });
         });
 
     /--------------------------特定用户的socket请求----------------------------/
     io.of(Config.socket.my)
         .on("connection", (socket) => {
-
 
 
         });
@@ -245,11 +233,13 @@ module.exports = (io) => {
  * socket异常统一处理
  * @param socket    socket实例
  * @param ex        异常对象
+ * @param info      错误信息
  * @private
  */
-function _socketException(socket, ex) {
-    console.log("exception");
+function _socketException(socket, ex, info) {
+    console.log(ex);
     return socket.emit("error occurred", {
-        "error": ex
+        "error": ex,
+        "eventName": info
     });
 }
