@@ -15,6 +15,18 @@ import * as Actions from "../actions";
 import { SOCKET_ADDRESS } from "../constants";
 import Util from "../Util";
 
+let emojiPickerStyles = {
+    "position": "absolute",
+    "left": 0,
+    "top": "3.9rem",
+    "backgroundColor": "white",
+    "width": "100%",
+    "padding": ".3em .6em",
+    "border": "1px solid #0074d9",
+    "borderTop": "none",
+    "zIndex": "2"
+};
+
 const socket = io.connect(SOCKET_ADDRESS.room);
 
 /**
@@ -48,26 +60,32 @@ class _UsersList extends Component {
         const _this = this;
         if (list && list.length) {
             return list.map((item) => {
+                return (
+                    <li className="list-group-item clearfix room-item user-item" key={Util.random()}>
+                        <img src={item.avatarUrl} className="user-list-head"/>
+                        <span title={item.name} className="user-item-name">{item.name}</span>
+                    </li>
+                );
                 //  自己和已经添加的朋友
-                if (friends.indexOf(item._id) > -1 || item._id == uId) {
-                    return (
-                        <li className="list-group-item clearfix room-item user-item" key={Util.random()}>
-                            <img src={item.avatarUrl} className="user-list-head"/>
-                            <span title={item.name} className="user-item-name">{item.name}</span>
-                        </li>
-                    );
-                } else {
-                    return (
-                        <li className="list-group-item clearfix room-item user-item" key={Util.random()}>
-                            <button type="button" onClick={_this.handleAddFriend.bind(_this,item._id)}
-                                    className="btn btn-success pull-right add-btn">
-                                <span className="glyphicon glyphicon-plus"></span>
-                            </button>
-                            <img src={item.avatarUrl} className="user-list-head"/>
-                            <span title={item.name} className="user-item-name">{item.name}</span>
-                        </li>
-                    );
-                }
+                //if (friends.indexOf(item._id) > -1 || item._id == uId) {
+                //    return (
+                //        <li className="list-group-item clearfix room-item user-item" key={Util.random()}>
+                //            <img src={item.avatarUrl} className="user-list-head"/>
+                //            <span title={item.name} className="user-item-name">{item.name}</span>
+                //        </li>
+                //    );
+                //} else {
+                //    return (
+                //        <li className="list-group-item clearfix room-item user-item" key={Util.random()}>
+                //            <button type="button" onClick={_this.handleAddFriend.bind(_this,item._id)}
+                //                    className="btn btn-success pull-right add-btn">
+                //                <span className="glyphicon glyphicon-plus"></span>
+                //            </button>
+                //            <img src={item.avatarUrl} className="user-list-head"/>
+                //            <span title={item.name} className="user-item-name">{item.name}</span>
+                //        </li>
+                //    );
+                //}
             });
         }
     }
@@ -295,21 +313,20 @@ class Room extends Component {
         return (
             <div className="room-detail">
                 <h1>{roomName}</h1>
-
                 <div className="message-users clearfix">
                     <div className="room-messages">
                         <_MessageList listData={messages} uId={userInfo._id}/>
                     </div>
                     <div className="room-users">
                         <_UsersList listData={users} friends={friends} uId={userInfo._id}
-                                    addFriendCallback={this.handleAddFriend.bind(this)}/>
+                                    addFriendCallback={this.handleAddFriend.bind(this)} />
                     </div>
                 </div>
                 <div className="post-edit-area">
                     <div className="input-group">
                         <input type="text" className="form-control" ref="post-input" placeholder="请输入内容..."
                                onKeyDown={this.handleKeyDown.bind(this)}
-                               aria-describedby="basic-addon2"/>
+                               aria-describedby="basic-addon2" />
                         <span className="input-group-addon" onClick={this.handlePost.bind(this)}>发送</span>
                     </div>
                 </div>

@@ -57,8 +57,8 @@ class Nav extends Component {
             "success": function (data) {
                 //  退出登录后,前端也下线
                 userLogout();
-                checkLogin(false, {});
                 userOffline();
+                checkLogin(false, {});
                 history.replaceState(null, "/");
             },
             "error": function (ex) {
