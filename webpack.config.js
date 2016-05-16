@@ -1,8 +1,5 @@
 var webpack = require("webpack");
-
-new webpack.DefinePlugin({
-    'process.env.NODE_ENV': '"production"'
-});
+var InlineEnviromentVariablesPlugin = require('inline-environment-variables-webpack-plugin');
 
 module.exports = {
     entry: [
@@ -12,6 +9,9 @@ module.exports = {
         path: `${__dirname}/public/js/`,
         filename: "bundle.js"
     },
+    plugins: [
+        new InlineEnviromentVariablesPlugin({ NODE_ENV :"production" })
+    ],
     module: {
         loaders: [
             {test: /\.js$/, loader: "jsx!babel"},
