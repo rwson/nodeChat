@@ -12,7 +12,7 @@ const UserModel = Model.User;
 
 let avaList = [];
 
-//	读取头像目录
+//  读取头像目录
 _readFile(Config.avatarPath).then((files) => {
     if (files && files.length) {
         files.forEach((item) => {
@@ -24,30 +24,13 @@ _readFile(Config.avatarPath).then((files) => {
 module.exports = {
 
     /**
-     * 根据Id查询用户
-     * @param _userId       用户id
-     * @returns {Promise}
-     */
-    "findUserById": (_userId) => {
-        let promise = new Promise((resolve, reject) => {
-            UserModel.findById(_userId, (ex, user) => {
-                if (ex) {
-                    reject(ex);
-                }
-                resolve(user);
-            });
-        });
-        return promise;
-    },
-
-    /**
      * 根据邮箱查找用户/创建用户
      * @param email     邮箱
      * @returns {Promise}
      */
     "findByEmailOrCreate": (email) => {
         let promise = new Promise((resolve, reject) => {
-            UserModel.find({"email": email}, (ex, user) => {
+            UserModel.find({ "email": email }, (ex, user) => {
                 if (ex) {
                     reject(ex);
                 }
@@ -87,7 +70,7 @@ module.exports = {
                 if (!user.friendRequest) {
                     user.friendRequest = [];
                 }
-                if(user.friendRequest.indexOf(userId) == -1){
+                if (user.friendRequest.indexOf(userId) == -1) {
                     user.friendRequest.push(userId);
                 }
                 //  更新对方数据并且保存
@@ -109,7 +92,27 @@ module.exports = {
      * @returns {Promise}
      */
     "rejectAddFriend": (userId, requestId) => {
-        let promise = new Promise();
+        let promise = new Promise((resolve, reject) => {
+            UserModel.findById(userId, (ex, user) => {
+                if (ex) {
+                    reject(ex);
+                }
+
+                //  删除本次好友请求
+                user.friendRequest = user.friendRequest.filter((id) => {
+                    return id != requestId;
+                });
+
+                //  保存
+                user.save((ex, user) => {
+                    if (ex) {
+                        reject(ex);
+                    }
+                    resolve(user);
+                });
+
+            });
+        });
         return promise;
     },
 
@@ -121,36 +124,55 @@ module.exports = {
      */
     "agreeAddFriend": (userId, friendId) => {
         let promise = new Promise((resolve, reject) => {
-            //  先查询用户
-            this.findUserById((userId))
-                .then((user) => {
-                    if (user) {
-                        //  再查询请求用户
-                        this.findUserById(friendId)
-                            .then((Fuser) => {
-                                let index = user.friendRequest.indexOf(friendId);
-                                if (!user.friends) {
-                                    user.friends = [];
-                                }
-                                user.friends.push(Fuser);
-                                if (index > -1) {
-                                    user.friendRequest.splice(index, 1);
-                                }
-                                //  更新用户的一些信息并且保存
-                                user.save((ex, user) => {
-                                    if (ex) {
-                                        reject(ex);
-                                    }
-                                    resolve(user);
-                                });
-                            })
-                            .catch((ex) => {
-                                reject(ex);
-                            });
-                    }
-                }).catch((ex) => {
+
+            //  查询用户
+            UserModel.findById(userId, (ex, user) => {
+                if (ex) {
                     reject(ex);
+                }
+
+                //  查询好友用户
+                UserModel.findById(friendId, (ex, fUser) => {
+                    if (ex) {
+                        reject(ex);
+                    }
+
+                    //  更新自己和好友用户的好友id列表
+                    if (!user.friends) {
+                        user.friends = [];
+                    }
+
+                    if (user.friends.indexOf(friendId) == -1) {
+                        user.friends.push(friendId);
+                    }
+
+                    if (!fUser.friends) {
+                        fUser.friends = [];
+                    }
+
+                    if(fUser.friends.indexOf(userId) == -1) {
+                        fUser.friends.push(userId);
+                    }
+
+                    //  先保存自己,再保存好友
+                    user.save((ex, user) => {
+                        if (ex) {
+                            reject(ex);
+                        }
+
+                        fUser.save((ex, fUser) => {
+                            if (ex) {
+                                reject(ex);
+                            }
+
+                            resolve(user);
+                        });
+                    });
+
                 });
+
+            });
+
         });
         return promise;
     },
@@ -163,21 +185,47 @@ module.exports = {
      */
     "deleteFriend": (userId, friendId) => {
         let promise = new Promise((resolve, reject) => {
-            this.findUserById(userId)
-                .then((user) => {
-                    user.friends = user.friends.filter((item) => {
-                        return item._id != friendId;
+
+            //  把自己查出来
+            UserModel.findById(userId, (ex, user) => {
+                if(ex) {
+                    reject(ex);
+                }
+
+                //  查询好友用户
+                UserModel.findById(friendId, (ex,fUser) => {
+                    if(ex) {
+                        reject(ex);
+                    }
+
+                    //  更新自己和好友的列表
+                    user.friends = user.friends.filter((id) => {
+                        return id != friendId;
                     });
+
+                    fUser.friends = fUser.friends.filter((id) => {
+                        return id != userId;
+                    });
+
+                    //  先后保存
                     user.save((ex, user) => {
-                        if (ex) {
+                        if(ex) {
                             reject(ex);
                         }
-                        resolve(user);
+
+                        fUser.save((ex, fUser) => {
+                            if(ex) {
+                                reject(ex);
+                            }
+
+                            resolve(user);
+                        });
+
                     });
-                })
-                .catch((ex) => {
-                    reject(ex);
+
                 });
+
+            });
         });
         return promise;
     },

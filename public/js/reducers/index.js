@@ -4,7 +4,17 @@
 
 "use strict";
 
-import { CHECK_LOGIN, LOGIN, LOGOUT, USER_OFFLINE, GET_MESSAGE, GET_USERS, GET_ROOMS, UPDATE_ROOM_NAME } from "../constants";
+import { 
+    CHECK_LOGIN, 
+    LOGIN, 
+    LOGOUT, 
+    USER_OFFLINE, 
+    GET_MESSAGE, 
+    GET_USERS, 
+    GET_ROOMS, 
+    UPDATE_ROOM_NAME,
+    UPDATE_USER_INFO
+ } from "../constants";
 import objectAssign from "object-assign";
 
 //  默认state
@@ -77,6 +87,14 @@ export default function reducer(state = initialState, action = {}) {
             return objectAssign({}, state, {
                 "roomName": action.roomName
             });
+            break;
+
+        //  更新用户信息
+        case UPDATE_USER_INFO:
+            return objectAssign({}, state, {
+                "userInfo": action.userInfo
+            });
+            break;
 
         //  默认不匹配
         default :

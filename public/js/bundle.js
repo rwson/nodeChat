@@ -26863,6 +26863,14 @@
 	            return (0, _objectAssign2["default"])({}, state, {
 	                "roomName": action.roomName
 	            });
+	            break;
+
+	        //  更新用户信息
+	        case _constants.UPDATE_USER_INFO:
+	            return (0, _objectAssign2["default"])({}, state, {
+	                "userInfo": action.userInfo
+	            });
+	            break;
 
 	        //  默认不匹配
 	        default:
@@ -26933,7 +26941,10 @@
 	    "GET_ROOMS": "GET_ROOMS",
 
 	    //  更新房间名
-	    "UPDATE_ROOM_NAME": "UPDATE_ROOM_NAME"
+	    "UPDATE_ROOM_NAME": "UPDATE_ROOM_NAME",
+
+	    //  更新用户信息
+	    "UPDATE_USER_INFO": "UPDATE_USER_INFO"
 
 	};
 	module.exports = exports["default"];
@@ -27159,6 +27170,7 @@
 	exports.getMessages = getMessages;
 	exports.getRooms = getRooms;
 	exports.updateRoomName = updateRoomName;
+	exports.updateUserInfo = updateUserInfo;
 
 	var _constants = __webpack_require__(238);
 
@@ -27261,6 +27273,19 @@
 	    return {
 	        "type": _constants.UPDATE_ROOM_NAME,
 	        "roomName": name
+	    };
+	}
+
+	/**
+	 * 更新用户信息
+	 * @param  userInfo    用户信息
+	 * @return {{type: *, userInfo: *}}
+	 */
+
+	function updateUserInfo(userInfo) {
+	    return {
+	        "type": _constants.UPDATE_USER_INFO,
+	        "userInfo": userInfo
 	    };
 	}
 
@@ -35869,36 +35894,36 @@
 	            var _this = this;
 	            if (list && list.length) {
 	                return list.map(function (item) {
-	                    return _react2["default"].createElement(
-	                        "li",
-	                        { className: "list-group-item clearfix room-item user-item", key: _Util2["default"].random() },
-	                        _react2["default"].createElement("img", { src: item.avatarUrl, className: "user-list-head" }),
-	                        _react2["default"].createElement(
-	                            "span",
-	                            { title: item.name, className: "user-item-name" },
-	                            item.name
-	                        )
-	                    );
 	                    //  自己和已经添加的朋友
-	                    //if (friends.indexOf(item._id) > -1 || item._id == uId) {
-	                    //    return (
-	                    //        <li className="list-group-item clearfix room-item user-item" key={Util.random()}>
-	                    //            <img src={item.avatarUrl} className="user-list-head"/>
-	                    //            <span title={item.name} className="user-item-name">{item.name}</span>
-	                    //        </li>
-	                    //    );
-	                    //} else {
-	                    //    return (
-	                    //        <li className="list-group-item clearfix room-item user-item" key={Util.random()}>
-	                    //            <button type="button" onClick={_this.handleAddFriend.bind(_this,item._id)}
-	                    //                    className="btn btn-success pull-right add-btn">
-	                    //                <span className="glyphicon glyphicon-plus"></span>
-	                    //            </button>
-	                    //            <img src={item.avatarUrl} className="user-list-head"/>
-	                    //            <span title={item.name} className="user-item-name">{item.name}</span>
-	                    //        </li>
-	                    //    );
-	                    //}
+	                    if (friends.indexOf(item._id) > -1 || item._id == uId) {
+	                        return _react2["default"].createElement(
+	                            "li",
+	                            { className: "list-group-item clearfix room-item user-item", key: _Util2["default"].random() },
+	                            _react2["default"].createElement("img", { src: item.avatarUrl, className: "user-list-head" }),
+	                            _react2["default"].createElement(
+	                                "span",
+	                                { title: item.name, className: "user-item-name" },
+	                                item.name
+	                            )
+	                        );
+	                    } else {
+	                        return _react2["default"].createElement(
+	                            "li",
+	                            { className: "list-group-item clearfix room-item user-item", key: _Util2["default"].random() },
+	                            _react2["default"].createElement(
+	                                "button",
+	                                { type: "button", onClick: _this.handleAddFriend.bind(_this, item._id),
+	                                    className: "btn btn-success pull-right add-btn" },
+	                                _react2["default"].createElement("span", { className: "glyphicon glyphicon-plus" })
+	                            ),
+	                            _react2["default"].createElement("img", { src: item.avatarUrl, className: "user-list-head" }),
+	                            _react2["default"].createElement(
+	                                "span",
+	                                { title: item.name, className: "user-item-name" },
+	                                item.name
+	                            )
+	                        );
+	                    }
 	                });
 	            }
 	        }
@@ -36041,6 +36066,7 @@
 	            var getMessages = _props3.getMessages;
 	            var getUsers = _props3.getUsers;
 	            var updateRoomName = _props3.updateRoomName;
+	            var updateUserInfo = _props3.updateUserInfo;
 	            var id = this.props.params.id;
 
 	            //  用户存在
@@ -36098,12 +36124,29 @@
 
 	                if (userInfo._id == data.targetId) {
 	                    var isAgree = confirm("用户" + data.user.name + "请求添将你你加为好友,你觉得可以吗?");
+
+	                    //  组织给server端的数据
+	                    var socketArgument = {
+	                        "requestId": data.requestId,
+	                        "targetId": data.targetId,
+	                        "roomId": id
+	                    };
+
 	                    if (isAgree) {
 	                        alert("你同意了" + data.user.name + "的好友请求");
+	                        socket.emit("agree friend request", socketArgument);
 	                    } else {
 	                        alert("你拒绝了" + data.user.name + "的好友请求");
+	                        socket.emit("reject friend request", socketArgument);
 	                    }
 	                }
+	            });
+
+	            /**
+	             * 更新用户信息
+	             */
+	            socket.on("update user", function (user) {
+	                updateUserInfo(user.user);
 	            });
 
 	            //  绑定异常处理
@@ -36192,12 +36235,11 @@
 	            var messages = _props4.messages;
 	            var roomName = _props4.roomName;
 	            var userInfo = _props4.userInfo;
+	            var roomId = this.props.params.roomId;
 
 	            var friends = [];
 	            if (!_Util2["default"].isEmpty(userInfo)) {
-	                friends = userInfo.friends.map(function (item) {
-	                    return item._id;
-	                });
+	                friends = userInfo.friends;
 	            }
 	            return _react2["default"].createElement(
 	                "div",
@@ -36213,12 +36255,12 @@
 	                    _react2["default"].createElement(
 	                        "div",
 	                        { className: "room-messages" },
-	                        _react2["default"].createElement(_MessageList, { listData: messages, uId: userInfo._id })
+	                        _react2["default"].createElement(_MessageList, { listData: messages, roomId: roomId, uId: userInfo._id })
 	                    ),
 	                    _react2["default"].createElement(
 	                        "div",
 	                        { className: "room-users" },
-	                        _react2["default"].createElement(_UsersList, { listData: users, friends: friends, uId: userInfo._id,
+	                        _react2["default"].createElement(_UsersList, { listData: users, roomId: roomId, friends: friends, uId: userInfo._id,
 	                            addFriendCallback: this.handleAddFriend.bind(this) })
 	                    )
 	                ),

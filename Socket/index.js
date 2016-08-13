@@ -244,19 +244,84 @@ module.exports = (io) => {
             socket.on("request add friend", (data) => {
                 const userId = data.userId;
                 const targetId = data.targetId;
-                //  先把请求写入数据库
+
+                //  把好友请求写入数据库
                 UserController.requestAddFriend(userId, targetId)
                     .then((user) => {
 
-                        console.log(user);
-
                         //  像前台发送广播,前台根据传过去的targetId是否等于当前用户的id做判断
                         socket.broadcast.emit("new friend request", {
-                            "user": user,
-                            "targetId": targetId
+                            "requestId": userId,
+                            "targetId": targetId,
+                            "user": user
                         });
                     })
                     .catch((ex) => _socketException(socket, ex, "request add friend's UserController.requestAddFriend"));
+            });
+
+            /**
+             * 同意好友申请
+             */
+            socket.on("agree friend request", (data) => {
+                let userId = data.targetId;
+                let requestId = data.targetId;
+                let roomId = data.roomId;
+
+                UserController.agreeAddFriend(userId, requestId)
+                    .then((user) => {
+                        socket.broadcast.emit("update user", {
+                            "user": user
+                        });
+                        socket.emit("update user", {
+                            "user": user
+                        });
+
+                        //  获取房间内所有用户
+                        UserController.getOnlineUsers(roomId)
+                            .then((users) => {
+                                socket.broadcast.emit("users", {
+                                    "users": users
+                                });
+                                socket.emit("users", {
+                                    "users": users
+                                });
+                            })
+                            .catch((ex) => _socketException(socket, ex, "UserController.getOnlineUsers"));
+
+                    })
+                    .catch((ex) => _socketException(socket, ex, "request add friend's UserController.rejectAddFriend"));
+            });
+
+            /**
+             * 拒绝好友申请
+             */
+            socket.on("reject friend request", (data) => {
+                let userId = data.targetId;
+                let requestId = data.requestId;
+                let roomId = data.roomId;
+
+                UserController.rejectAddFriend(userId, requestId)
+                    .then((user) => {
+                        socket.broadcast.emit("update user", {
+                            "user": user
+                        });
+                        socket.emit("update user", {
+                            "user": user
+                        });
+
+                        //  获取房间内所有用户
+                        UserController.getOnlineUsers(roomId)
+                            .then((users) => {
+                                socket.broadcast.emit("users", {
+                                    "users": users
+                                });
+                                socket.emit("users", {
+                                    "users": users
+                                });
+                            })
+                            .catch((ex) => _socketException(socket, ex, "UserController.getOnlineUsers"));
+                    })
+                    .catch((ex) => _socketException(socket, ex, "request add friend's UserController.rejectAddFriend"));
             });
         });
 

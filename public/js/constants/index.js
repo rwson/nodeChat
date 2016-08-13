@@ -51,6 +51,9 @@ export default ({
     "GET_ROOMS": "GET_ROOMS",
 
     //  更新房间名
-    "UPDATE_ROOM_NAME": "UPDATE_ROOM_NAME"
+    "UPDATE_ROOM_NAME": "UPDATE_ROOM_NAME",
+
+    //  更新用户信息
+    "UPDATE_USER_INFO": "UPDATE_USER_INFO"
 
 });

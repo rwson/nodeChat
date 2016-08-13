@@ -4,7 +4,17 @@
 
 "use strict";
 
-import { CHECK_LOGIN,LOGIN, LOGOUT, USER_OFFLINE, GET_MESSAGE, GET_USERS, GET_ROOMS, UPDATE_ROOM_NAME } from "../constants";
+import { 
+    CHECK_LOGIN,
+    LOGIN, 
+    LOGOUT, 
+    USER_OFFLINE, 
+    GET_MESSAGE, 
+    GET_USERS, 
+    GET_ROOMS, 
+    UPDATE_ROOM_NAME, 
+    UPDATE_USER_INFO 
+} from "../constants";
 
 /**
  * 检测用户是否登录
@@ -97,5 +107,17 @@ export function updateRoomName(name){
     return {
         "type": UPDATE_ROOM_NAME,
         "roomName": name
+    };
+}
+
+/**
+ * 更新用户信息
+ * @param  userInfo    用户信息
+ * @return {{type: *, userInfo: *}}
+ */
+export function updateUserInfo(userInfo) {
+    return {
+        "type": UPDATE_USER_INFO,
+        "userInfo": userInfo
     };
 }

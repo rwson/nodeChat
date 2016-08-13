@@ -61,32 +61,26 @@ class _UsersList extends Component {
         const _this = this;
         if (list && list.length) {
             return list.map((item) => {
-                return (
-                    <li className="list-group-item clearfix room-item user-item" key={Util.random()}>
-                        <img src={item.avatarUrl} className="user-list-head"/>
-                        <span title={item.name} className="user-item-name">{item.name}</span>
-                    </li>
-                );
                 //  自己和已经添加的朋友
-                //if (friends.indexOf(item._id) > -1 || item._id == uId) {
-                //    return (
-                //        <li className="list-group-item clearfix room-item user-item" key={Util.random()}>
-                //            <img src={item.avatarUrl} className="user-list-head"/>
-                //            <span title={item.name} className="user-item-name">{item.name}</span>
-                //        </li>
-                //    );
-                //} else {
-                //    return (
-                //        <li className="list-group-item clearfix room-item user-item" key={Util.random()}>
-                //            <button type="button" onClick={_this.handleAddFriend.bind(_this,item._id)}
-                //                    className="btn btn-success pull-right add-btn">
-                //                <span className="glyphicon glyphicon-plus"></span>
-                //            </button>
-                //            <img src={item.avatarUrl} className="user-list-head"/>
-                //            <span title={item.name} className="user-item-name">{item.name}</span>
-                //        </li>
-                //    );
-                //}
+                if (friends.indexOf(item._id) > -1 || item._id == uId) {
+                   return (
+                       <li className="list-group-item clearfix room-item user-item" key={Util.random()}>
+                           <img src={item.avatarUrl} className="user-list-head"/>
+                           <span title={item.name} className="user-item-name">{item.name}</span>
+                       </li>
+                   );
+                } else {
+                   return (
+                       <li className="list-group-item clearfix room-item user-item" key={Util.random()}>
+                           <button type="button" onClick={_this.handleAddFriend.bind(_this,item._id)}
+                                   className="btn btn-success pull-right add-btn">
+                               <span className="glyphicon glyphicon-plus"></span>
+                           </button>
+                           <img src={item.avatarUrl} className="user-list-head"/>
+                           <span title={item.name} className="user-item-name">{item.name}</span>
+                       </li>
+                   );
+                }
             });
         }
     }
@@ -180,7 +174,7 @@ class Room extends Component {
      * 组件被实例化完成
      */
     componentDidMount() {
-        const { userInfo, getMessages, getUsers, updateRoomName } = this.props;
+        const { userInfo, getMessages, getUsers, updateRoomName, updateUserInfo } = this.props;
         const { id } = this.props.params;
 
         //  用户存在
@@ -237,12 +231,29 @@ class Room extends Component {
             const { userInfo } = this.props;
             if (userInfo._id == data.targetId) {
                 const isAgree = confirm(`用户${data.user.name}请求添将你你加为好友,你觉得可以吗?`);
+
+                //  组织给server端的数据
+                const socketArgument = {
+                    "requestId": data.requestId,
+                    "targetId": data.targetId,
+                    "roomId": id
+                };
+
                 if (isAgree) {
                     alert(`你同意了${data.user.name}的好友请求`);
+                    socket.emit("agree friend request", socketArgument);
                 } else {
                     alert(`你拒绝了${data.user.name}的好友请求`);
+                    socket.emit("reject friend request", socketArgument);
                 }
             }
+        });
+
+        /**
+         * 更新用户信息
+         */
+        socket.on("update user", (user) => {
+            updateUserInfo(user.user);
         });
 
         //  绑定异常处理
@@ -313,21 +324,21 @@ class Room extends Component {
      */
     render() {
         const { users, messages, roomName, userInfo } = this.props;
+        const { roomId } = this.props.params;
+
         let friends = [];
         if (!Util.isEmpty(userInfo)) {
-            friends = userInfo.friends.map((item) => {
-                return item._id;
-            });
+            friends = userInfo.friends;
         }
         return (
             <div className="room-detail">
                 <h1>{roomName}</h1>
                 <div className="message-users clearfix">
                     <div className="room-messages">
-                        <_MessageList listData={messages} uId={userInfo._id}/>
+                        <_MessageList listData={messages} roomId={roomId} uId={userInfo._id}/>
                     </div>
                     <div className="room-users">
-                        <_UsersList listData={users} friends={friends} uId={userInfo._id}
+                        <_UsersList listData={users} roomId={roomId} friends={friends} uId={userInfo._id}
                                     addFriendCallback={this.handleAddFriend.bind(this)} />
                     </div>
                 </div>
