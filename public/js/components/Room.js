@@ -5,6 +5,7 @@
 "use strict";
 
 import React,{ Component } from "react";
+import ReactDOM from "react-dom";
 import EmojiPicker,{ emojiMap }  from "react-emoji-picker";
 import { Route,Link } from "react-router";
 import classname from "classname";
@@ -147,13 +148,21 @@ class _MessageList extends Component {
     }
 
     /**
+     * 组件更新完成
+     */
+    componentDidUpdate() {
+        let node = ReactDOM.findDOMNode(document.querySelector("#messages"));
+        let parentNode = node.parentNode;
+    }
+
+    /**
      * 渲染组件布局
      * @returns {XML}
      */
     render() {
         const { listData, uId } = this.props;
         return (
-            <div>
+            <div id="messages">
                 {this.renderList(listData, uId)}
             </div>
         );
@@ -332,6 +341,17 @@ class Room extends Component {
                 </div>
             </div>
         );
+    }
+}
+
+/**
+ * 设置消息显示区的顶部距离
+ * @param {HTMLElement} node     DOM节点
+ * @param {Number}      distance 距离
+ */
+function setTop(node ,distance) {
+    if(node && distance) {
+        node.scrollTop = distance;
     }
 }
 

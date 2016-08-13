@@ -54,7 +54,7 @@ export default function reducer(state = initialState, action = {}) {
         //  获取房间内的消息
         case GET_MESSAGE:
             return objectAssign({}, state, {
-                "messages": action.messages
+                "messages": action.messages.reverse()
             });
             break;
 

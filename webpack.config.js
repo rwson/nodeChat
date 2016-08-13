@@ -9,9 +9,6 @@ module.exports = {
         path: `${__dirname}/public/js/`,
         filename: "bundle.js"
     },
-    plugins: [
-        new InlineEnviromentVariablesPlugin({ NODE_ENV :"production" })
-    ],
     module: {
         loaders: [
             {test: /\.js$/, loader: "jsx!babel"},

@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodees6 app.js",
-    "debug": "supervisores6 app.js",
+    "start": "node app.js",
+    "debug": "supervisor app.js",
     "webpackWatch": "webpack --watch",
     "build-production": "webpack -p --define process.env.NODE_ENV='\"production\"' --progress --color"
   },

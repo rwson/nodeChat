@@ -43,6 +43,9 @@ module.exports = (io) => {
                     //  从room表取得所有房间
                     RoomController.getRooms()
                         .then((rooms) => {
+                            socket.broadcast.emit("all room", {
+                                "rooms": rooms
+                            });
                             socket.emit("all room", {
                                 "rooms": rooms
                             });
@@ -62,6 +65,9 @@ module.exports = (io) => {
                         socket.emit("all room", {
                             "rooms": rooms
                         });
+                        socket.broadcast.emit("all room", {
+                            "rooms": rooms
+                        });
                     })
                     .catch((ex) => _socketException(socket, ex, "get all room's RoomController.getRooms"));
             });
@@ -75,6 +81,9 @@ module.exports = (io) => {
                         //  从room表取得所有房间
                         RoomController.getRooms()
                             .then((rooms) => {
+                                socket.broadcast.emit("all room", {
+                                    "rooms": rooms
+                                });
                                 socket.emit("all room", {
                                     "rooms": rooms
                                 });
@@ -101,6 +110,19 @@ module.exports = (io) => {
                         //  用户表修改所在房间id
                         UserController.joinRoom(userId, roomId)
                             .then((user) => {
+
+                            //  获取所有房间并且分发给其他用户
+                            RoomController.getRooms()
+                                .then((rooms) => {
+                                    socket.broadcast.emit("all room", {
+                                        "rooms": rooms
+                                    });
+                                    socket.emit("all room", {
+                                        "rooms": rooms
+                                    });
+                                })
+                                .catch((ex) => _socketException(socket, ex, "all room's RoomController.getRooms"));
+                                
                                 //  重新获取所有信息(用户第一次进入房间,只获取之前的聊天记录,之前其他人的加入信息不管)
                                 MessageController.getMessagesByRoomId(data.roomId, "user")
                                     .then((messages) => {
@@ -112,6 +134,7 @@ module.exports = (io) => {
                                         });
                                     })
                                     .catch((ex) => _socketException(socket, ex, "join room's MessageController.getMessagesByRoomId"));
+                                
                                 //  获取房间内所有用户
                                 UserController.getOnlineUsers(roomId)
                                     .then((users) => {
@@ -123,6 +146,7 @@ module.exports = (io) => {
                                         });
                                     })
                                     .catch((ex) => _socketException(socket, ex, "UserController.getOnlineUsers"));
+                                
                                 //  发送系统消息
                                 socket.emit("join success", {
                                     "message": "加入房间成功",
@@ -170,6 +194,7 @@ module.exports = (io) => {
                 //  将接收到的消息保存到message表
                 MessageController.postNew(data)
                     .then(() => {
+                        
                         //  从messages表中获取数据,并且通知所有用户和自己
                         MessageController.getMessagesByRoomId(data.roomId)
                             .then((messages) => {
@@ -195,6 +220,15 @@ module.exports = (io) => {
                     .then((user) => {
                         RoomController.leaveRoom(roomId, userId)
                             .then((room) => {
+                           
+                            //  获取所有房间并且分发给其他用户
+                            RoomController.getRooms()
+                                .then((rooms) => {
+                                    socket.broadcast.emit("all room", {
+                                        "rooms": rooms
+                                    });
+                                })
+                                .catch((ex) => _socketException(socket, ex, "all room's RoomController.getRooms"));
                                 socket.broadcast.emit("users", {
                                     "users": room.users
                                 });
@@ -216,7 +250,7 @@ module.exports = (io) => {
 
                         console.log(user);
 
-                        //  像前台发送通知,前台根据传过去的targetId是否等于当前用户的id做判断
+                        //  像前台发送广播,前台根据传过去的targetId是否等于当前用户的id做判断
                         socket.broadcast.emit("new friend request", {
                             "user": user,
                             "targetId": targetId
