@@ -9,6 +9,8 @@
 
     git clone https://github.com/rwson/nodeChat
     
+    git checkout ng2
+    
     cd nodeChat && npm install
     
     mongod
