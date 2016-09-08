@@ -5,8 +5,11 @@
  * User Actions
  */
 
+import {Http} from "@angular/http";
 import {Injectable} from "@angular/core";
 import {Actions, AppStore} from "angular2-redux";
+
+import {REQUEST_PREFIX} from "../constants/index";
 
 type Types = "CHECK_LOGIN" | "LOGIN" | "LOGOUT" | "USER_OFFLINE" | "UPDATE_USER_INFO";
 export const UserActionTypes = {
@@ -23,11 +26,36 @@ export interface UserAction {
     user?: Object;
 }
 
+class User extends Comment {
+
+    constructor(props){
+        super(props);
+    }
+
+    register(name, email) {
+
+    }
+
+}
+
 @Injectable()
 export class User extends Actions {
 
-    constructor(store: AppStore) {
+    constructor(private _http: Http, store: AppStore) {
         super(store);
+    }
+
+    authLogin() {
+        this._http.get(`${REQUEST_PREFIX}/validate`)
+            .map(res => res.json())
+            .map(res => {
+                if (res.status && res.status === "success") {
+                    dispatch(this.checkLogin(true, res.user));
+                } else {
+                    dispatch(this.checkLogin(false, {}));
+                }
+            })
+            .subscribe();
     }
 
     /**
