@@ -1,39 +1,21 @@
-## Angular2 Express Starter
+### nodeChat
 
-Demo: https://express-angular2.herokuapp.com/
 
-- Angular 2 rc.6
-- Express
-- jwt ( JSON Web Tokens )
-- ng-semantic ( https://github.com/vladotesanovic/ngSemantic )
-- SystemJS ( loader )
+> 基于express + socket.io + mongodb + Angular2 + redux开发的web聊天
 
-## Install
-```bash
-git clone https://github.com/vladotesanovic/angular2-express-starter
-cd angular2-express-starter
+---
 
-# Install dependencies
-npm install
+##### Usage
 
-# start server
-npm run develop
+    git clone https://github.com/rwson/nodeChat
+    
+    git checkout ng2
+    
+    cd nodeChat && npm install
+    
+    mongod
+    
+new Terminal tab
 
-# Application url: http://localhost:3000
-```
+    npm run develop
 
-## Development
-Uncomment in public/index.html:
-
-```html
-<script src="assets/js/systemjs.config.js"></script>
-<script>
-    System.import('app').catch(function(err) { console.error(err); });
-</script>
-```
-
-Comment out
-```html
-<!-- Production mod -->
-<script src="js/bundle.min.js"></script>
-```
