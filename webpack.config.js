@@ -1,7 +1,5 @@
-const webpack = require("webpack");
-const loaders = {
-
-};
+var webpack = require("webpack");
+var InlineEnviromentVariablesPlugin = require('inline-environment-variables-webpack-plugin');
 
 module.exports = {
     entry: [

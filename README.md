@@ -5,17 +5,16 @@
 
 ---
 
-##### Usage
+#### Todo
 
-    git clone https://github.com/rwson/nodeChat
-    
-    git checkout ng2
-    
-    cd nodeChat && npm install
-    
-    mongod
-    
-new Terminal tab
+>- ~~用户登录[注册]~~
+- ~~查看所有房间~~
+- ~~进入单独房间~~
+- ~~查看房间用户/消息/在房间里里面进行发言~~
+- ~~离开房间通知~~
+- 添加好友/删除好友
+- 加入表情
+- 与单个好友聊天、陌生人之间的临时会话
 
-    npm start
+developing...
 
