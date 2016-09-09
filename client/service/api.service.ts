@@ -8,6 +8,7 @@ const socketCfg = {
     room: "/room",
     rooms: "/rooms",
     my: "/my"
+
 };
 
 @Injectable()
