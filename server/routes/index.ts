@@ -16,6 +16,7 @@ const MessageController = Controller.Message;
 
 
 export function Router(app) {
+
     /**
      * 验证用户是否登录
      */

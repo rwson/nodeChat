@@ -9,7 +9,7 @@ var config_1 = require("../config");
 var User_1 = require("./User");
 var Message_1 = require("./Message");
 var Room_1 = require("./Room");
-mongoose.connect(config_1.config.database);
+mongoose.connect(config_1.Config.database);
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = {
     User: User_1.default,

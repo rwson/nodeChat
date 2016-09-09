@@ -4,7 +4,7 @@
 
 "use strict";
 
-export const config = {
+export const Config = {
     "socket":{
         "main": "/",
         "rooms": "/rooms",

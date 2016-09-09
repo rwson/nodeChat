@@ -2,7 +2,7 @@
  * 配置参数
  */
 "use strict";
-exports.config = {
+exports.Config = {
     "socket": {
         "main": "/",
         "rooms": "/rooms",
@@ -16,4 +16,4 @@ exports.config = {
     "db": "chat",
     "avatarPath": "public/avatar"
 };
-//# sourceMappingURL=config.js.map
+//# sourceMappingURL=Config.js.map

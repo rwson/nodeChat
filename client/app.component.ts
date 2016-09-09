@@ -1,3 +1,5 @@
+declare var io: any;
+
 import { Component, ViewChild } from "@angular/core";
 import { Http, Headers, RequestOptions, Response } from "@angular/http";
 import { SemanticPopupComponent } from "ng-semantic";

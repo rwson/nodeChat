@@ -7,13 +7,13 @@
 "use strict";
 
 import * as mongoose from "mongoose";
-import {config} from "../config";
+import {Config} from "../config";
 
 import User from "./User";
 import Message from "./Message";
 import Room from "./Room";
 
-mongoose.connect(config.database);
+mongoose.connect(Config.database);
 
 export default {
     User: User,

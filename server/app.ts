@@ -2,29 +2,46 @@
 
 import * as express from "express";
 import * as path from "path";
-import * as favicon from "serve-favicon";
-// import * as logger from "morgan";
-// import * as cookieParser from "cookie-parser";
+import * as logger from "morgan";
+import * as cookieParser from "cookie-parser";
 import * as session from "express-session";
-// import * as bodyParser from "body-parser";
+import * as bodyParser from "body-parser";
 import * as mongoStore from "connect-mongo";
 
-import * as config from "./config";
+import {Config} from "./Config";
 import * as router from "./routes/index";
 
-// import * as socketIo from "socket.io";
-// const socketEvents = require("./Socket");
+import * as socketIo from "socket.io";
+import {socketEvents} from "./Socket/index";
 
 const MongoStore = mongoStore(session);
 
-// import "./_.mongoose.page";
+import "./_.mongoose.page";
 
 const app: express.Application = express();
 app.disable("x-powered-by");
 
-app.use(express.static(path.join(__dirname, '../public')));
+app.set("port",process.env.PORT || 3000);
 
+app.use(express.static(path.join(__dirname, '../public')));
 app.use('/client', express.static(path.join(__dirname, '../client')));
+app.use(logger("dev"));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, "public")));
+app.use(session({
+    "secret": Config.cookieSecret,
+    "maxAge": Config.maxAge,
+    "key": Config.db,
+    "resave": false,
+    "saveUninitialized": false,
+    "store": new MongoStore({
+        "db": Config.db,
+        "url": Config.database,
+        "autoRemove": "disabled"
+    })
+}));
 
 router.Router(app);
 
@@ -61,4 +78,11 @@ app.use(function(err: any, req: express.Request, res: express.Response, next: ex
     });
 });
 
-export { app }
+//  开启socket监听
+let io = socketIo.listen(app.listen(app.get("port"), () => {
+    console.log("app listen on " + app.get("port") + "...");
+}));
+
+//  初始化socket相关配置
+socketEvents(io);
+
