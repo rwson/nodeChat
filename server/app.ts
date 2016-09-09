@@ -1,34 +1,40 @@
 /// <reference path="../typings/index.d.ts" />
-import * as express from "express";
-import { join } from "path";
-import * as favicon from "serve-favicon";
-import { json, urlencoded } from "body-parser";
 
-import { loginRouter } from "./routes/login";
-import { protectedRouter } from "./routes/protected";
+import * as express from "express";
+import * as path from "path";
+import * as favicon from "serve-favicon";
+// import * as logger from "morgan";
+// import * as cookieParser from "cookie-parser";
+import * as session from "express-session";
+// import * as bodyParser from "body-parser";
+import * as mongoStore from "connect-mongo";
+
+import * as config from "./config";
+import * as router from "./routes/index";
+
+// import * as socketIo from "socket.io";
+// const socketEvents = require("./Socket");
+
+const MongoStore = mongoStore(session);
+
+// import "./_.mongoose.page";
 
 const app: express.Application = express();
 app.disable("x-powered-by");
 
-app.use(favicon(join(__dirname, "../public", "favicon.ico")));
-app.use(express.static(join(__dirname, '../public')));
+app.use(express.static(path.join(__dirname, '../public')));
 
-app.use(json());
-app.use(urlencoded({ extended: true }));
+app.use('/client', express.static(path.join(__dirname, '../client')));
 
-// api routes
-app.use("/api", protectedRouter);
-app.use("/login", loginRouter);
-
-app.use('/client', express.static(join(__dirname, '../client')));
+router.Router(app);
 
 // error handlers
 // development error handler
 // will print stacktrace
 if (app.get("env") === "development") {
 
-    app.use(express.static(join(__dirname, '../node_modules')));
-    app.use(express.static(join(__dirname, '../tools')));
+    app.use(express.static(path.join(__dirname, '../node_modules')));
+    app.use(express.static(path.join(__dirname, '../tools')));
 
     app.use(function(err, req: express.Request, res: express.Response, next: express.NextFunction) {
         res.status(err.status || 500);

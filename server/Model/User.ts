@@ -1,0 +1,22 @@
+/**
+ * User
+ * build by rwson @9/9/16
+ * mail:rw_Song@sina.com
+ */
+
+"use strict";
+
+import * as mongoose from "mongoose";
+
+const Schema = mongoose.Schema;
+const User = new Schema({
+    "email": String,            //  邮箱
+    "name": String,             //  用户名
+    "avatarUrl": String,        //  头像
+    "online": Boolean,          //  是否在线
+    "friends": Array,           //  好友列表
+    "friendRequest":Array,      //  好友请求
+    "roomId": String            //  当前所在房间的id
+});
+
+export default User;

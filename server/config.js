@@ -1,4 +1,19 @@
+/**
+ * 配置参数
+ */
 "use strict";
-exports.secret = "RbBQqA6uF#msRF8s7h*?@=95HUm&DgMDd6zLFn4XzWQ6dtwXSJwBX#?gL2JWf!";
-exports.length = 128;
+exports.config = {
+    "socket": {
+        "main": "/",
+        "rooms": "/rooms",
+        "room": "/room",
+        "my": "/my"
+    },
+    "database": "mongodb://127.0.0.1:27017/nodeChat",
+    "port": 3000,
+    "cookieSecret": "nodeChat",
+    "maxAge": 60 * 1000 * 60 * 12,
+    "db": "chat",
+    "avatarPath": "public/avatar"
+};
 //# sourceMappingURL=config.js.map

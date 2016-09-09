@@ -1,28 +1,29 @@
-"use strict";
 /// <reference path="../typings/index.d.ts" />
+"use strict";
 var express = require("express");
-var path_1 = require("path");
-var favicon = require("serve-favicon");
-var body_parser_1 = require("body-parser");
-var login_1 = require("./routes/login");
-var protected_1 = require("./routes/protected");
+var path = require("path");
+// import * as logger from "morgan";
+// import * as cookieParser from "cookie-parser";
+var session = require("express-session");
+// import * as bodyParser from "body-parser";
+var mongoStore = require("connect-mongo");
+var router = require("./routes/index");
+// import * as socketIo from "socket.io";
+// const socketEvents = require("./Socket");
+var MongoStore = mongoStore(session);
+// import "./_.mongoose.page";
 var app = express();
 exports.app = app;
 app.disable("x-powered-by");
-app.use(favicon(path_1.join(__dirname, "../public", "favicon.ico")));
-app.use(express.static(path_1.join(__dirname, '../public')));
-app.use(body_parser_1.json());
-app.use(body_parser_1.urlencoded({ extended: true }));
-// api routes
-app.use("/api", protected_1.protectedRouter);
-app.use("/login", login_1.loginRouter);
-app.use('/client', express.static(path_1.join(__dirname, '../client')));
+app.use(express.static(path.join(__dirname, '../public')));
+app.use('/client', express.static(path.join(__dirname, '../client')));
+router.Router(app);
 // error handlers
 // development error handler
 // will print stacktrace
 if (app.get("env") === "development") {
-    app.use(express.static(path_1.join(__dirname, '../node_modules')));
-    app.use(express.static(path_1.join(__dirname, '../tools')));
+    app.use(express.static(path.join(__dirname, '../node_modules')));
+    app.use(express.static(path.join(__dirname, '../tools')));
     app.use(function (err, req, res, next) {
         res.status(err.status || 500);
         res.json({
