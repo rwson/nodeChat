@@ -1,4 +1,7 @@
 /// <reference path="../typings/index.d.ts" />
+/// <reference path="../typings/globals/mongoose/index.d.ts" />
+/// <reference path="../typings/globals/node/index.d.ts" />
+/// <reference path="../typings/globals/express/index.d.ts" />
 
 import * as express from "express";
 import * as path from "path";

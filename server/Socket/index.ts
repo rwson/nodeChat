@@ -22,6 +22,7 @@ export function socketEvents(io) {
     /--------------------------主页的socket----------------------------/
     io.of(Config.socket.main)
         .on("connection", (socket) => {
+            console.log("socket main connected");
         });
 
     /--------------------------房间列表的socket----------------------------/

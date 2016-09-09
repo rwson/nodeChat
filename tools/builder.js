@@ -5,6 +5,9 @@ var builder = new SystemBuilder();
 builder.loadConfig('./tools/systemjs.config.js')
     .then(function(){
         var outputFile = argv.prod ? './public/assets/js/bundle.min.js' : './public/assets/js/bundle.js';
+
+        console.log(outputFile);
+
         return builder.buildStatic('app', outputFile, {
             minify: argv.prod,
             mangle: false, // disabled because Angular RC.5 bug

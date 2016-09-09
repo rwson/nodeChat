@@ -14,6 +14,7 @@ function socketEvents(io) {
     /--------------------------主页的socket----------------------------/;
     io.of(Config_1.Config.socket.main)
         .on("connection", function (socket) {
+        console.log("socket main connected");
     });
     /--------------------------房间列表的socket----------------------------/;
     io.of(Config_1.Config.socket.rooms)

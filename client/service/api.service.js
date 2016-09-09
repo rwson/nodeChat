@@ -1,4 +1,4 @@
-System.register(["@angular/core", "angular2-jwt", "rxjs/add/operator/map"], function (exports_1, context_1) {
+System.register(["@angular/core", "rxjs/add/operator/map"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,36 +10,36 @@ System.register(["@angular/core", "angular2-jwt", "rxjs/add/operator/map"], func
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, angular2_jwt_1, ApiService;
+    var core_1, socketCfg, WebSocketService;
     return {
         setters: [
             function (core_1_1) {
                 core_1 = core_1_1;
             },
-            function (angular2_jwt_1_1) {
-                angular2_jwt_1 = angular2_jwt_1_1;
-            },
             function (_1) {
             }
         ],
         execute: function () {
-            ApiService = (function () {
-                function ApiService(authHttp) {
-                    this.authHttp = authHttp;
+            socketCfg = {
+                main: "/",
+                room: "/room",
+                rooms: "/rooms",
+                my: "/my"
+            };
+            WebSocketService = (function () {
+                function WebSocketService() {
+                    this.mainSocket;
                 }
-                ApiService.prototype.get = function (url) {
-                    return this
-                        .authHttp
-                        .get(url)
-                        .map(function (response) { return response.json(); });
+                WebSocketService.connectMain = function () {
+                    this.mainSocket;
                 };
-                return ApiService;
+                return WebSocketService;
             }());
-            ApiService = __decorate([
+            WebSocketService = __decorate([
                 core_1.Injectable(),
-                __metadata("design:paramtypes", [angular2_jwt_1.AuthHttp])
-            ], ApiService);
-            exports_1("ApiService", ApiService);
+                __metadata("design:paramtypes", [])
+            ], WebSocketService);
+            exports_1("WebSocketService", WebSocketService);
         }
     };
 });

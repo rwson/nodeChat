@@ -6,7 +6,7 @@
 
 "use strict";
 
-export default {
+export const Util = {
 
     /**
      * 生成范围内的一个随机数

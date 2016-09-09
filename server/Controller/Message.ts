@@ -3,27 +3,32 @@
  * build by rwson @9/9/16
  * mail:rw_Song@sina.com
  */
+
 "use strict";
-var _1 = require("../Model/");
-var MessageModel = _1.Model.Message;
-exports.MessageController = {
+
+import {Model} from "../Model/";
+
+const MessageModel = Model.Message;
+
+export const MessageController = {
+
     /**
      * 根据roomId获取信息(50条)
      * @param roomId    房间id
      * @param type      消息类型
      * @returns {Promise}
      */
-    "getMessagesByRoomId": function (roomId, type) {
-        var condition = {
+    "getMessagesByRoomId": (roomId, type) => {
+        let condition = {
             "roomId": roomId
         };
-        var promise = new Promise(function (resolve, reject) {
+        let promise = new Promise((resolve, reject) => {
             MessageModel.find(condition, null, {
                 "sort": {
                     "createAt": -1
                 },
                 "limit": 50
-            }, function (ex, messages) {
+            }, (ex, messages) => {
                 if (ex) {
                     reject(ex);
                 }
@@ -32,18 +37,19 @@ exports.MessageController = {
         });
         return promise;
     },
+
     /**
      * 用户发送信息
      * @param message   用户发送的信息
      * @returns {Promise}
      */
-    "postNew": function (message) {
-        var promise = new Promise(function (resolve, reject) {
-            var Message = new MessageModel();
+    "postNew": (message) => {
+        let promise = new Promise((resolve, reject) => {
+            let Message = new MessageModel();
             Message.content = message.content;
             Message.creator = message.creator;
             Message.roomId = message.roomId;
-            Message.save(function (ex, message) {
+            Message.save((ex, message) => {
                 if (ex) {
                     reject(ex);
                 }
@@ -52,5 +58,5 @@ exports.MessageController = {
         });
         return promise;
     }
+
 };
-//# sourceMappingURL=Message.js.map

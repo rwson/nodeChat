@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../service/api.service"], function (export
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, api_service_1, HomeComponent;
+    var core_1, api_service_1, HomeComponent, _a;
     return {
         setters: [
             function (core_1_1) {
@@ -41,7 +41,7 @@ System.register(["@angular/core", "../../service/api.service"], function (export
                     selector: "home",
                     templateUrl: "client/modules/home/home.component.html"
                 }),
-                __metadata("design:paramtypes", [api_service_1.ApiService])
+                __metadata("design:paramtypes", [typeof (_a = typeof api_service_1.ApiService !== "undefined" && api_service_1.ApiService) === "function" && _a || Object])
             ], HomeComponent);
             exports_1("HomeComponent", HomeComponent);
         }

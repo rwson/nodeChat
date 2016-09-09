@@ -1,17 +1,29 @@
 import { Injectable } from "@angular/core";
-import { AuthHttp } from "angular2-jwt";
-import { Response } from "@angular/http";
+import * as socket from "socket.io-client";
+
 import "rxjs/add/operator/map";
 
+const socketCfg = {
+    main: "/",
+    room: "/room",
+    rooms: "/rooms",
+    my: "/my"
+};
+
 @Injectable()
-export class ApiService {
+export class WebSocketService {
 
-    constructor(private authHttp: AuthHttp) {}
+    mainSocket: any;
+    roomSocket: any;
+    roomsSocket: any;
+    userSocket: any;
 
-    get(url: string) {
-        return this
-            .authHttp
-            .get(url)
-            .map((response: Response) => response.json());
+    constructor() {
+        this.mainSocket;
     }
+
+    static connectMain() {
+        this.mainSocket
+    }
+
 }

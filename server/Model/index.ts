@@ -15,7 +15,7 @@ import Room from "./Room";
 
 mongoose.connect(Config.database);
 
-export default {
+export const Model = {
     User: User,
     Message: Message,
     Room: Room

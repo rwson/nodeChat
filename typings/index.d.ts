@@ -13,5 +13,6 @@
 /// <reference path="globals/node/index.d.ts" />
 /// <reference path="globals/serve-favicon/index.d.ts" />
 /// <reference path="globals/serve-static/index.d.ts" />
+/// <reference path="globals/socket.io-client/index.d.ts" />
 /// <reference path="globals/socket.io/index.d.ts" />
 /// <reference path="modules/mongoose/index.d.ts" />

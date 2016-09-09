@@ -38,13 +38,18 @@ System.register(["@angular/core", "@angular/http", "ng-semantic", "rxjs/add/oper
                 }
                 AppComponent.prototype.signup = function () {
                     var _this = this;
-                    this.http.post("/login/signup", JSON.stringify({ password: this.user.password, username: this.user.username }), new http_1.RequestOptions({
+                    this.http.post("/login/signup", JSON.stringify({
+                        password: this.user.password,
+                        username: this.user.username
+                    }), new http_1.RequestOptions({
                         headers: new http_1.Headers({ "Content-Type": "application/json" })
                     }))
                         .map(function (res) { return res.json(); })
                         .subscribe(function (res) {
                         _this.response = res;
-                    }, function (error) { console.log(error); });
+                    }, function (error) {
+                        console.log(error);
+                    });
                 };
                 AppComponent.prototype.login = function () {
                     var _this = this;
@@ -56,7 +61,9 @@ System.register(["@angular/core", "@angular/http", "ng-semantic", "rxjs/add/oper
                         localStorage.setItem("id_token", res.jwt);
                         _this.myPopup.hide();
                         location.reload();
-                    }, function (error) { console.log(error); });
+                    }, function (error) {
+                        console.log(error);
+                    });
                 };
                 AppComponent.prototype.logout = function () {
                     localStorage.removeItem("id_token");

@@ -4,8 +4,7 @@
  * mail:rw_Song@sina.com
  */
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = {
+exports.Util = {
     /**
      * 生成范围内的一个随机数
      * @param  {number} min 最小值

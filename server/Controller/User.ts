@@ -3,44 +3,52 @@
  * build by rwson @9/9/16
  * mail:rw_Song@sina.com
  */
+
 "use strict";
-var fs = require("fs");
-var config_1 = require("../config");
-var index_1 = require("../Util/index");
-var index_2 = require("../Model/index");
-var UserModel = index_2.Model.User;
-var avaList = [];
+
+import * as fs from "fs";
+
+import {Config} from "../config";
+import {Util} from "../Util/index";
+
+import {Model} from "../Model/index";
+
+const UserModel = Model.User;
+
+let avaList = [];
+
 //  读取头像目录
-_readFile(config_1.Config.avatarPath).then(function (files) {
+_readFile(Config.avatarPath).then((files) => {
     if (files && files.length) {
-        files.forEach(function (item) {
-            avaList.push(config_1.Config.avatarPath.replace("public", "") + "/" + item);
+        files.forEach((item) => {
+            avaList.push(`${Config.avatarPath.replace("public", "")}/${item}`);
         });
     }
 });
-exports.UserController = {
+
+export const UserController = {
+
     /**
      * 根据邮箱查找用户/创建用户
      * @param email     邮箱
      * @returns {Promise}
      */
-    "findByEmailOrCreate": function (email) {
-        var promise = new Promise(function (resolve, reject) {
-            UserModel.find({ "email": email }, function (ex, user) {
+    "findByEmailOrCreate": (email) => {
+        let promise = new Promise((resolve, reject) => {
+            UserModel.find({"email": email}, (ex, user) => {
                 if (ex) {
                     reject(ex);
                 }
                 if (user.length) {
                     resolve(user[0]);
-                }
-                else {
+                } else {
                     user = new UserModel({
                         "name": email.split("@")[0],
                         "email": email,
-                        "avatarUrl": avaList[index_1.Util.random(0, avaList.length - 1)],
+                        "avatarUrl": avaList[Util.random(0, avaList.length - 1)],
                         "roomId": ""
                     });
-                    user.save(function (ex, user) {
+                    user.save((ex, user) => {
                         if (ex) {
                             reject(ex);
                         }
@@ -51,15 +59,16 @@ exports.UserController = {
         });
         return promise;
     },
+
     /**
      * 请求添加对方为好友
      * @param userId    用户id
      * @param targetId  目标用户id
      * @returns {Promise}
      */
-    "requestAddFriend": function (userId, targetId) {
-        var promise = new Promise(function (resolve, reject) {
-            UserModel.findById(targetId, function (ex, user) {
+    "requestAddFriend": (userId, targetId) => {
+        let promise = new Promise((resolve, reject) => {
+            UserModel.findById(targetId, (ex, user) => {
                 if (ex) {
                     reject(ex);
                 }
@@ -70,7 +79,7 @@ exports.UserController = {
                     user.friendRequest.push(userId);
                 }
                 //  更新对方数据并且保存
-                user.save(function (ex, user) {
+                user.save((ex, user) => {
                     if (ex) {
                         reject(ex);
                     }
@@ -80,136 +89,165 @@ exports.UserController = {
         });
         return promise;
     },
+
     /**
      * 拒绝添加对方为好友
      * @param userId     用户id
      * @param requestId  请求添加好友的用户id
      * @returns {Promise}
      */
-    "rejectAddFriend": function (userId, requestId) {
-        var promise = new Promise(function (resolve, reject) {
-            UserModel.findById(userId, function (ex, user) {
+    "rejectAddFriend": (userId, requestId) => {
+        let promise = new Promise((resolve, reject) => {
+            UserModel.findById(userId, (ex, user) => {
                 if (ex) {
                     reject(ex);
                 }
+
                 //  删除本次好友请求
-                user.friendRequest = user.friendRequest.filter(function (id) {
+                user.friendRequest = user.friendRequest.filter((id) => {
                     return id != requestId;
                 });
+
                 //  保存
-                user.save(function (ex, user) {
+                user.save((ex, user) => {
                     if (ex) {
                         reject(ex);
                     }
                     resolve(user);
                 });
+
             });
         });
         return promise;
     },
+
     /**
      * 同意添加好友
      * @param userId        用户id
      * @param friendId      好友id
      * @returns {Promise}
      */
-    "agreeAddFriend": function (userId, friendId) {
-        var promise = new Promise(function (resolve, reject) {
+    "agreeAddFriend": (userId, friendId) => {
+        let promise = new Promise((resolve, reject) => {
+
             //  查询用户
-            UserModel.findById(userId, function (ex, user) {
+            UserModel.findById(userId, (ex, user) => {
                 if (ex) {
                     reject(ex);
                 }
+
                 //  查询好友用户
-                UserModel.findById(friendId, function (ex, fUser) {
+                UserModel.findById(friendId, (ex, fUser) => {
                     if (ex) {
                         reject(ex);
                     }
+
                     //  更新自己和好友用户的好友id列表
                     if (!user.friends) {
                         user.friends = [];
                     }
+
                     if (user.friends.indexOf(friendId) == -1) {
                         user.friends.push(friendId);
                     }
+
                     if (!fUser.friends) {
                         fUser.friends = [];
                     }
+
                     if (fUser.friends.indexOf(userId) == -1) {
                         fUser.friends.push(userId);
                     }
+
                     //  先保存自己,再保存好友
-                    user.save(function (ex, user) {
+                    user.save((ex, user) => {
                         if (ex) {
                             reject(ex);
                         }
-                        fUser.save(function (ex, fUser) {
+
+                        fUser.save((ex, fUser) => {
                             if (ex) {
                                 reject(ex);
                             }
+
                             resolve(user);
                         });
                     });
+
                 });
+
             });
+
         });
         return promise;
     },
+
     /**
      * 删除好友
      * @param userId        用户id
      * @param friendId      好友id
      * @returns {Promise}
      */
-    "deleteFriend": function (userId, friendId) {
-        var promise = new Promise(function (resolve, reject) {
+    "deleteFriend": (userId, friendId) => {
+        let promise = new Promise((resolve, reject) => {
+
             //  把自己查出来
-            UserModel.findById(userId, function (ex, user) {
+            UserModel.findById(userId, (ex, user) => {
                 if (ex) {
                     reject(ex);
                 }
+
                 //  查询好友用户
-                UserModel.findById(friendId, function (ex, fUser) {
+                UserModel.findById(friendId, (ex, fUser) => {
                     if (ex) {
                         reject(ex);
                     }
+
                     //  更新自己和好友的列表
-                    user.friends = user.friends.filter(function (id) {
+                    user.friends = user.friends.filter((id) => {
                         return id != friendId;
                     });
-                    fUser.friends = fUser.friends.filter(function (id) {
+
+                    fUser.friends = fUser.friends.filter((id) => {
                         return id != userId;
                     });
+
                     //  先后保存
-                    user.save(function (ex, user) {
+                    user.save((ex, user) => {
                         if (ex) {
                             reject(ex);
                         }
-                        fUser.save(function (ex, fUser) {
+
+                        fUser.save((ex, fUser) => {
                             if (ex) {
                                 reject(ex);
                             }
+
                             resolve(user);
                         });
+
                     });
+
                 });
+
             });
         });
         return promise;
     },
+
     /**
      * 用户加入一个房间
      * @param userId    用户id
      * @param roomId    房间id
      * @returns {Promise}
      */
-    "joinRoom": function (userId, roomId) {
-        var promise = new Promise(function (resolve, reject) {
+    "joinRoom": (userId, roomId) => {
+        let promise = new Promise((resolve, reject) => {
             UserModel.findByIdAndUpdate(userId, {
                 "$set": {
                     "roomId": roomId
                 }
-            }, function (ex, user) {
+            }, (ex, user) => {
                 if (ex) {
                     reject(ex);
                 }
@@ -218,18 +256,19 @@ exports.UserController = {
         });
         return promise;
     },
+
     /**
      * 用户离开房间
      * @param userId    用户id
      * @returns {Promise}
      */
-    "leaveRoom": function (userId, callback) {
-        var promise = new Promise(function (resolve, reject) {
+    "leaveRoom": (userId, callback) => {
+        let promise = new Promise((resolve, reject) => {
             UserModel.findByIdAndUpdate(userId, {
                 "$set": {
                     "roomId": ""
                 }
-            }, function (ex, user) {
+            }, (ex, user) => {
                 if (ex) {
                     reject(ex);
                 }
@@ -238,18 +277,19 @@ exports.UserController = {
         });
         return promise;
     },
+
     /**
      * 用户上线
      * @param _userId   用户id
      * @returns {Promise}
      */
-    "online": function (_userId) {
-        var promise = new Promise(function (resolve, reject) {
+    "online": (_userId) => {
+        let promise = new Promise((resolve, reject) => {
             UserModel.findByIdAndUpdate(_userId, {
                 "$set": {
                     "online": true
                 }
-            }, function (ex, user) {
+            }, (ex, user) => {
                 if (ex) {
                     reject(ex);
                 }
@@ -258,18 +298,19 @@ exports.UserController = {
         });
         return promise;
     },
+
     /**
      * 用户下线
      * @param _userId   用户id
      * @returns {Promise}
      */
-    "offline": function (_userId) {
-        var promise = new Promise(function (resolve, reject) {
+    "offline": (_userId) => {
+        let promise = new Promise((resolve, reject) => {
             UserModel.findOneAndUpdate(_userId, {
                 "$set": {
                     "online": false
                 }
-            }, function (ex, user) {
+            }, (ex, user) => {
                 if (ex) {
                     reject(ex);
                 }
@@ -278,16 +319,17 @@ exports.UserController = {
         });
         return promise;
     },
+
     /**
      * 获取特定房间内的用户
      * @param roomId    房间id
      * @returns {Promise}
      */
-    "getOnlineUsers": function (roomId) {
-        var promise = new Promise(function (resolve, reject) {
+    "getOnlineUsers": (roomId) => {
+        let promise = new Promise((resolve, reject) => {
             UserModel.find({
                 "roomId": roomId
-            }, function (ex, users) {
+            }, (ex, users) => {
                 if (ex) {
                     reject(ex);
                 }
@@ -296,15 +338,17 @@ exports.UserController = {
         });
         return promise;
     }
+
 };
+
 /**
  * 异步读取文件
  * @param path      目标路径
  * @returns {Promise}
  */
 function _readFile(path) {
-    var prromise = new Promise(function (resolve, reject) {
-        fs.readdir(path, function (ex, files) {
+    let prromise = new Promise((resolve, reject) => {
+        fs.readdir(path, (ex, files) => {
             if (ex) {
                 reject(ex);
             }
@@ -313,4 +357,3 @@ function _readFile(path) {
     });
     return prromise;
 }
-//# sourceMappingURL=User.js.map
